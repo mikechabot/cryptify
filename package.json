@@ -1,0 +1,28 @@
+{
+  "name": "cryptify",
+  "version": "0.0.1",
+  "description": "File-based encryption with Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikechabot/cryptify.git"
+  },
+  "keywords": [
+    "encryption",
+    "decryption",
+    "file-based",
+    "encryption",
+    "crypto",
+    "javascript",
+    "encryption"
+  ],
+  "author": "Mike Chabot",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/mikechabot/cryptify/issues"
+  },
+  "homepage": "https://github.com/mikechabot/cryptify#readme"
+}
