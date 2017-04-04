@@ -4,7 +4,7 @@
   "description": "File-based encryption with Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "node example.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,11 @@
   "bugs": {
     "url": "https://github.com/mikechabot/cryptify/issues"
   },
-  "homepage": "https://github.com/mikechabot/cryptify#readme"
+  "homepage": "https://github.com/mikechabot/cryptify#readme",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1"
+  }
 }
