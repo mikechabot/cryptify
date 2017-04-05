@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const CRYPTIFY_VERSION = '1.0';
+const CONST = require('./const');
 
 const CLOSE_EVENT = 'close';
 const DEFAULT_OPTIONS = {
@@ -16,15 +16,54 @@ const DEFAULT_OPTIONS = {
     keep: true
 };
 
-const ALLOWED_COMMANDS = ['-e', '--encrypt', '-d', '--decrypt'];
+function __includes(array, entry) {
+    if (!array) return false;
+    return array.includes(entry);
+}
+
+function __contains(searchIn, searchFor) {
+    if (!searchIn || !searchFor) return false;
+    return searchFor.some(entry => {
+        return __includes(searchIn, entry);
+    });
+}
+
+function __hasUpperCase(str) {
+    if (!str) return false;
+    return str.trim().toLowerCase() !== str;
+}
+
+function __hasLowerCase(str) {
+    if (!str) return false;
+    return str.trim().toUpperCase() !== str;
+}
 
 function Options(arguments) {
-
+    this.files = [];
+    this.arguments = {};
     arguments.forEach((value, index) => {
-        if (value && value.startsWith('-')) {
-            this[value] = arguments[index + 1];
+        if (__includes(CONST.ALLOWED_ARGUMENTS, value)) {
+            if (__includes(CONST.TAKES_ARGUMENT, value)) {
+                console.log('ADDING ', value, ' WITH ARG ', arguments[index + 1])
+                this.arguments[value] = arguments[index + 1];
+            } else {
+                console.log('THIS DOESNT TAKE AN ARG: ', value)
+                this.arguments[value] = undefined;
+            }
+        } else if (!this.arguments[arguments[index - 1]]) {
+            console.log('Adding file name: ', value)
+            this.files.push(value)
         }
     });
+}
+
+function __isValidPassword (password) {
+    return password !== null &&
+        password !== undefined &&
+        typeof password === 'string' &&
+        password.trim().length >= 8 &&
+        __contains(password.trim().split(''), CONST.SPECIAL_CHARACTERS) &&
+        (__hasUpperCase(password) && __hasLowerCase(password))
 }
 
 Options.prototype.valid = function() {
@@ -45,58 +84,84 @@ Options.prototype.valid = function() {
     // }
 }
 
-function __printHelpAndExit(message) {
-    console.log('');
-    if (message) {
-        console.log(`   **${message}**`);
-        console.log('');
-    }
-    console.log('   Cryptify v1.0 File-based Encryption Utility')
-    console.log('   https://www.npmjs.com/package/cryptify');
-    console.log('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
-    console.log('');
-    console.log('   Usage:');
-    console.log('       cryptify <file> (-p <password>) (command) [options]');
-    console.log('       cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc');
-    console.log('       cryptify ./foo.props ./bar.txt -p mySecretKey --decrypt');
-    console.log('');
-    console.log('   Commands:');
-    console.log('       -e --encrypt              Encrypt the file(s)');
-    console.log('       -d --decrypt              Decrypt the file(s)');
-    console.log('');
-    console.log('   Optional Arguments:');
-    console.log('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
-    console.log('       -k --keep (true|false)    Keep the original file(s) (Default: false)');
-    console.log('       -h --help                 Show this menu');
-    console.log('       -v --version              Show version');
-    console.log('');
-    process.exit();
+function println(message) {
+    console.log(message || '');
 }
 
-function __printVersionAndExit() {
-    console.log(CRYPTIFY_VERSION);
+function _printAndExit(message) {
+    println(`${message}`);
+    exit();
+}
+
+function _printHelpAndExit(message) {
+    message ? (println(), println(`   MSG: ${message}`), println())
+            : println();
+    println('   Cryptify v1.0 File-based Encryption Utility')
+    println('   https://www.npmjs.com/package/cryptify');
+    println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
+    println();
+    println('   Usage:');
+    println('       cryptify (<file>... (-p <password>) (command) [options] | [other])');
+    println('       cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc');
+    println('       cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log');
+    println('       cryptify --version');
+    println();
+    println('   Required Commands:');
+    println('       -e --encrypt              Encrypt the file(s)');
+    println('       -d --decrypt              Decrypt the file(s)');
+    println();
+    println('   Optional Arguments:');
+    println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
+    println('       -k --keep (true|false)    Keep the original file(s) (Default: false)');
+    println('       -l --log (true|false)     Log verbose (Default: false)');
+    println();
+    println('   Other:');
+    println('       -h --help                 Show this menu');
+    println('       -v --version              Show version');
+    println();
+    println('   Password Requirements:');
+    println('       1) Minimum length: 8');
+    println('       2) Requires at least 1 special character');
+    println('       3) Combination of uppercase and lowercase');
+    exit();
+}
+
+function exit(code) {
+    code ? process.exit(code) : process.exit();
 }
 
 module.exports = function(arguments) {
     if (arguments.length === 0) {
-        __printHelpAndExit();
+        _printHelpAndExit();
     } else {
-        const passwordIndex = arguments.indexOf('-p');
-        if (passwordIndex === -1) {
-            __printHelpAndExit();
-        } else {
-            const files = arguments.splice(0, passwordIndex)
-            const options = new Options(arguments);
-            const keys = Object.keys(options);
-            if (keys.length === 1) {
-                const key = keys[0];
-                if (key === '-h' || key === '--help') __printHelpAndExit();
-                if (key === '-v' || key === '--version') __printVersionAndExit();
-                __printHelpAndExit('Missing required command, see help.');
-            } else if (keys.length === 2) {
-                const password = options['-p' || '--password'];
-                console.log('PASSWORD:', password, 'ARGS', arguments)
-            }
+        const options = new Options(arguments);
+        const validArgs = Object.keys(options.arguments);
+        const length = validArgs.length;
+        if (length === 0) {
+            _printAndExit('Missing required command, see help (--help)');
+        } else if (length === 1) {
+            if (__includes(CONST.OPTIONS.HELP, validArgs[0])) _printHelpAndExit();
+            if (__includes(CONST.OPTIONS.VERSION, validArgs[0])) _printAndExit(CONST.CRYPTIFY_VERSION);
+            _printAndExit('Invalid usage, see help (--help)');
+        } else if (length >= 2) {
+            // Ensure valid password
+            const password = options.arguments[CONST.OPTIONS.PASSWORD[0] || CONST.OPTIONS.PASSWORD[1]];
+            if (!password) _printAndExit('Missing required password, see help (--help)');
+            if (!__isValidPassword(password)) _printAndExit('Invalid password, see help (--help)')
+            // Ensure valid files
+            if (options.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
+            options.files.forEach(file => {
+                if (!fs.existsSync(file)) {
+                    _printAndExit(`No such file or directory: ${file}`);
+                }
+            });
+
+            println();
+            console.log('ValidArgs: ', length, validArgs);
+            console.log('    Files: ', options.files.length, options.files);
+            console.log('   ArgMap: ', JSON.stringify(options.arguments));
+            println();
+
         }
     }
 };
@@ -168,11 +233,11 @@ function __validate (inputPath, password, options) {
 
     if (!__isValidPassword(password)) {
         console.error(`Password must be a String. Supplied password: "${password}"`);
-        process.exit(1);
+        exit(1);
     }
     if (!__isValidCipher(options.cipher)) {
         console.error(`Invalid cipher: ${options.cipher}`);
-        process.exit(1);
+        exit(1);
     }
 }
 

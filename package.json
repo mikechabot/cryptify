@@ -5,8 +5,7 @@
   "main": "./index.js",
   "bin": "./index.js",
   "scripts": {
-    "encrypt": "node encrypt.js",
-    "decrypt": "node decrypt.js"
+    "start": "node encrypt.js"
   },
   "repository": {
     "type": "git",
