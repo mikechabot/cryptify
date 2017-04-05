@@ -2,10 +2,8 @@
   "name": "cryptify",
   "version": "0.0.4",
   "description": "File-based encryption with Node.js",
-  "main": "index.js",
-  "bin": {
-    "cryptify": "index.js"
-  },
+  "main": "./index.js",
+  "bin": "./index.js",
   "scripts": {
     "encrypt": "node encrypt.js",
     "decrypt": "node decrypt.js"
