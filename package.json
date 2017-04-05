@@ -4,7 +4,8 @@
   "description": "File-based encryption with Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "node example.js"
+    "encrypt": "node encrypt.js",
+    "decrypt": "node decrypt.js"
   },
   "repository": {
     "type": "git",
