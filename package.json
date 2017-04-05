@@ -1,8 +1,11 @@
 {
   "name": "cryptify",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "File-based encryption with Node.js",
   "main": "index.js",
+  "bin": {
+    "cross-env": "index.js"
+  },
   "scripts": {
     "encrypt": "node encrypt.js",
     "decrypt": "node decrypt.js"
