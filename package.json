@@ -4,7 +4,7 @@
   "description": "File-based encryption with Node.js",
   "main": "index.js",
   "bin": {
-    "cross-env": "index.js"
+    "cryptify": "index.js"
   },
   "scripts": {
     "encrypt": "node encrypt.js",
