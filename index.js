@@ -9,10 +9,12 @@ const DEFAULT_OPTIONS = {
     suffix: 'temp'
 };
 
-process.argv.forEach((val, index, array) => {
-    console.log(index + ': ' + val);
-});
-
+function listArgs() {
+    process.argv.forEach((val, index, array) => {
+        console.log(index + ': ' + val);
+    });
+}
+module.exports = listArgs;
 
 /**
  * Encrypt a file
