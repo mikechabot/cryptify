@@ -54,7 +54,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
 
         $ history
         666 cryptify --help
-        667 cryptify ./myfile -p mySecretKey
+        667 cryptify ./myfile.txt -e -p mySecretKey
         $ history -d 667
         $ history -w
 2. **Blunt Approach:** Clear current session history (in memory)
@@ -74,13 +74,13 @@ Windows does not store history between command prompt sessions.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
 3. Once work with `cryptify` is complete, close the command prompt:
 
-        C:\Users\[user]> cryptify ./myfile -p mySecretKey
+        C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
         C:\Users\[user]> exit
 
 ### <a name="cryptify#ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
 2. However, deleting the file PowerShell's history does do the trick.
 
-        PS C:\Users\[user]> cryptify ./myfile -p mySecretKey
+        PS C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
         PS C:\Users\[user]> exit
