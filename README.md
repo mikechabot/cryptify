@@ -65,7 +65,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         (open shell)
         $ cat $HISTFILE
         exit
-### Windows CMD
+### Windows Command Prompt
 Windows does not store history between command prompt sessions.
 1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
