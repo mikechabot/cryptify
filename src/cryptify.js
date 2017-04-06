@@ -219,7 +219,6 @@ function _encrypt (options, cipherAlgorithm) {
 /**
  * Decrypt a file
  * @param {Object} options
- *
  * @private
  */
 function _decrypt (options, cipherAlgorithm) {
