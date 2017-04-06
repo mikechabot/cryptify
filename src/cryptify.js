@@ -14,12 +14,12 @@ const CLOSE_EVENT = 'close';
 const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
 const TEMP = 'temp';
 
-function _includes(array, entry) {
+function _includes (array, entry) {
     if (!array) return false;
     return array.includes(entry);
 }
 
-function _contains(searchIn, searchFor) {
+function _contains (searchIn, searchFor) {
     if (!searchIn || !searchFor) return false;
     return searchFor.some(entry => {
         return _includes(searchIn, entry);
@@ -31,15 +31,15 @@ function _isValidCipher (cipher) {
 }
 
 function _isValidPassword (password) {
-    function __hasUpperCase(str) {
+    function __hasUpperCase (str) {
         if (!str) return false;
         return str.trim().toLowerCase() !== str;
     }
-    function __hasLowerCase(str) {
+    function __hasLowerCase (str) {
         if (!str) return false;
         return str.trim().toUpperCase() !== str;
     }
-    function __hasNumber(str) {
+    function __hasNumber (str) {
         if (!str) return false;
         return /\d/.test(str);
     }
@@ -49,10 +49,10 @@ function _isValidPassword (password) {
         password.trim().length >= 8 &&
         _contains(password.trim().split(''), CONST.SPECIAL_CHARACTERS) &&
         __hasNumber(password) &&
-        (__hasUpperCase(password) && __hasLowerCase(password))
+        (__hasUpperCase(password) && __hasLowerCase(password));
 }
 
-function CryptifyConfig(configArguments) {
+function CryptifyConfig (configArguments) {
     this.command = undefined;
     this.password = undefined;
     this.cipher = undefined;
@@ -63,10 +63,10 @@ function CryptifyConfig(configArguments) {
         if (_includes(CONST.REQUIRED_COMMANDS, value)) {
             this.command !== undefined
                 ? _printAndExit('Only single command allowed, see help (--help)')
-                : this.command = value
+                : this.command = value;
         } else if (_includes(CONST.OPTIONS.PASSWORD, value)) {
             if (this.password !== undefined) _printAndExit('Only single password allowed, see help (--help)');
-            if (!_isValidPassword(configArguments[index + 1])) _printAndExit('Invalid password, see help (--help)')
+            if (!_isValidPassword(configArguments[index + 1])) _printAndExit('Invalid password, see help (--help)');
             this.password = configArguments[index + 1];
         } else if (_includes(CONST.OPTIONS.CIPHER, value)) {
             if (this.cipher !== undefined) _printAndExit('Only single cipher allowed, see help (--help)');
@@ -85,49 +85,52 @@ function CryptifyConfig(configArguments) {
             }
         }
     });
+    if (this.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
+    if (!this.command) _printAndExit('Missing required command, see help (--help)');
+    if (!this.password) _printAndExit('Missing required password, see help (--help)');
 }
 
-CryptifyConfig.prototype.getFiles = function() {
+CryptifyConfig.prototype.getFiles = function () {
     return this.files;
-}
+};
 
-CryptifyConfig.prototype.getPassword = function() {
+CryptifyConfig.prototype.getPassword = function () {
     return this.password;
-}
+};
 
-CryptifyConfig.prototype.getCommand = function() {
+CryptifyConfig.prototype.getCommand = function () {
     return this.command;
-}
+};
 
-CryptifyConfig.prototype.getOptions = function() {
+CryptifyConfig.prototype.getOptions = function () {
     return this.options;
-}
+};
 
 CryptifyConfig.prototype.doEncrypt = function () {
     return this.command === CONST.OPTIONS.ENCRYPT[0] ||
         this.command === CONST.OPTIONS.ENCRYPT[1];
-}
+};
 
 CryptifyConfig.prototype.isVerbose = function () {
     return this.options[CONST.OPTIONS.LOG[0] || CONST.OPTIONS.LOG[1]] === true;
-}
+};
 
-function println(message) {
+function println (message) {
     console.log(message || '');
 }
 
-function _printAndExit(message) {
+function _printAndExit (message) {
     println(`${message}`);
     __exit();
 }
 
-function __exit(code) {
+function __exit (code) {
     code ? process.exit(code) : process.exit();
 }
 
-function _printHelpAndExit() {
+function _printHelpAndExit () {
     println();
-    println('   Cryptify v1.0 File-based Encryption Utility')
+    println('   Cryptify v1.0 File-based Encryption Utility');
     println('   https://www.npmjs.com/package/cryptify');
     println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
     println();
@@ -164,17 +167,17 @@ function _printHelpAndExit() {
     __exit();
 }
 
-function _printPasswordWarning() {
+function _printPasswordWarning () {
     println();
     println('  +----------------------------------------------------------------------+');
     println('  |   ** NOTE: You just entered a password key into a shell session **   |');
-    println('  |           Strongly consider clearing your session history            |')
+    println('  |           Strongly consider clearing your session history            |');
     println('  |        https://github.com/mikechabot/cryptify#recommendations        |');
     println('  +----------------------------------------------------------------------+');
     println();
 }
 
-module.exports = function(configArguments) {
+module.exports = function (configArguments) {
     if (configArguments.length === 0) {
         _printHelpAndExit();
     } else {
@@ -184,7 +187,7 @@ module.exports = function(configArguments) {
     }
 };
 
-function _cryptify(options) {
+function _cryptify (options) {
     options.doEncrypt()
         ? _encrypt(options, options.cipher || DEFAULT_CIPHER)
         : _decrypt(options, options.cipher || DEFAULT_CIPHER);
