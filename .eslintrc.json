@@ -16,7 +16,7 @@
       "afterColon": true,
       "on": "colon"
     }, "multiLine": { } }],
-    "no-console": ["error", { "allow": ["error"]}],
+    "no-console": ["error", { "allow": ["log", "error"]}],
     "no-debugger": 2,
     "no-extend-native": 0,
     "no-var": 1,
