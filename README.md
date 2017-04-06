@@ -5,10 +5,10 @@ File-based encryption (FBE) with Node.js
 - [Usage](#usage)
 - [Recommendations](#recommendations)
 
-# <a name="cryptify#installation">Installation</a>
+## <a name="cryptify#installation">Installation</a>
 - ```$ npm i -g cryptify```
 
-# <a name="cryptify#usage">Usage</a>
+## <a name="cryptify#usage">Usage</a>
 
     Cryptify v1.0 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
@@ -41,8 +41,9 @@ File-based encryption (FBE) with Node.js
        4) Combination of uppercase and lowercase
 
 
-# <a name="cryptify#recommendations">Recommendations</a>
-Strongly consider clearing your shell's session history of any sensitive information.
+## <a name="cryptify#recommendations">Recommendations</a>
+Strongly consider clearing your shell's session history of any sensitive information.\
+
 ### Bash
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
 
