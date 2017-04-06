@@ -67,10 +67,8 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
 ### Windows CMD
 Windows does not store history between command prompt sessions.
 
-1. However, for safety, consider decreasing the `Buffer Size` and `Number of Buffers` before use.
-
-    ![buffersize](http://imgur.com/a/osdRm)
-2. Per the above configuration, Windows will only one command in the buffer.
+1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
+2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store one command in the buffer.
 3. Once work with `cryptify` is complete, close the command prompt
 
         C:\Users\[user]> cryptify ./myfile -p mySecretKey
