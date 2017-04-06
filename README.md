@@ -40,8 +40,8 @@ File-based encryption (FBE) with Node.js
     Password Requirements:
        1) Minimum length: 8 characters
        2) Must contain at least 1 special character
-       2) Must contain at least 1 numeric character
-       3) Must contain a combination of uppercase and lowercase
+       3) Must contain at least 1 numeric character
+       4) Must contain a combination of uppercase and lowercase
 
 
 ## <a name="cryptify#recommendations">Recommendations</a>
