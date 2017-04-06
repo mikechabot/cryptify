@@ -45,7 +45,7 @@ File-based encryption (FBE) with Node.js
 
 
 ## <a name="cryptify#recommendations">Recommendations</a>
-Strongly consider clearing your shell's session history of any sensitive information.\
+Strongly consider clearing your shell's session history of any sensitive information.
 
 ### <a name="cryptify#bash">Bash</a>
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
