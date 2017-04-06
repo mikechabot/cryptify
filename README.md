@@ -9,11 +9,11 @@ File-based encryption (FBE) with Node.js
   - [Windows Powershell](#ps)
 
 ## <a name="cryptify#installation">Installation</a>
-- ```$ npm i -g cryptify```
+- ```$ npm i -g cryptify@latest```
 
 ## <a name="cryptify#usage">Usage</a>
 
-    Cryptify v1.1.4 File-based Encryption Utility
+    Cryptify v1.1.5 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
