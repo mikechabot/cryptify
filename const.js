@@ -45,44 +45,17 @@ const REQUIRED_COMMANDS = [
  * Optional arguments
  * @type {[*]}
  */
-const OPTIONAL_ARGUMENTS = [
-    ...OPTIONS.CIPHER,
+const OPTIONAL_ARGUMENTS_NO_ARGS = [
     ...OPTIONS.KEEP,
-    ...OPTIONS.LOG
-];
-
-/**
- * Other arguments
- * @type {[*]}
- */
-const OTHER_ARGUMENTS = [
+    ...OPTIONS.LOG,
     ...OPTIONS.HELP,
     ...OPTIONS.VERSION
-];
-
-/**
- * Allowed arguments
- * @type {[*]}
- */
-const ALLOWED_ARGUMENTS = [
-    ...REQUIRED_COMMANDS,
-    ...OPTIONAL_ARGUMENTS,
-    ...OTHER_ARGUMENTS,
-    ...OPTIONS.PASSWORD
-];
-
-const TAKES_ARGUMENT = [
-    ...OPTIONAL_ARGUMENTS,
-    ...OPTIONS.PASSWORD
 ];
 
 module.exports = {
     OPTIONS,
     REQUIRED_COMMANDS,
-    OPTIONAL_ARGUMENTS,
-    OTHER_ARGUMENTS,
-    ALLOWED_ARGUMENTS,
-    TAKES_ARGUMENT,
+    OPTIONAL_ARGUMENTS_NO_ARGS,
     CRYPTIFY_VERSION,
     SPECIAL_CHARACTERS
 };
