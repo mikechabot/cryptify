@@ -50,17 +50,17 @@ Strongly consider clearing your shell's session history of any sensitive informa
 ### <a name="cryptify#bash">Bash</a>
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
 
-1. **Tactical Approach:** Clear a specific session entry
+1. **Tactical Approach:** Clear a specific entry in the current session
 
         $ history
         666 cryptify --help
         667 cryptify ./myfile.txt -e -p mySecretKey
         $ history -d 667
         $ history -w
-2. **Blunt Approach:** Clear current session history (in memory)
+2. **Blunt Approach:** Clear the entire current session history (in memory)
 
         $ history -c
-3. **Nuclear Approach:** Clear current and existing session history (in memory, on disk)
+3. **Nuclear Approach:** Clear current and existing session history (in memory, and on disk)
 
         $ rm $HISTFILE
         $ history -c
