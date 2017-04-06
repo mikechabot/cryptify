@@ -38,21 +38,28 @@ function __hasLowerCase(str) {
     return str.trim().toUpperCase() !== str;
 }
 
-function Options(arguments) {
+function CryptifyConfig(arguments) {
+    this.command;
+    this.password;
     this.files = [];
-    this.arguments = {};
+    this.options = {};
+    console.log(arguments);
     arguments.forEach((value, index) => {
-        if (__includes(CONST.ALLOWED_ARGUMENTS, value)) {
-            if (__includes(CONST.TAKES_ARGUMENT, value)) {
-                console.log('ADDING ', value, ' WITH ARG ', arguments[index + 1])
-                this.arguments[value] = arguments[index + 1];
-            } else {
-                console.log('THIS DOESNT TAKE AN ARG: ', value)
-                this.arguments[value] = undefined;
-            }
-        } else if (!this.arguments[arguments[index - 1]]) {
+        if (__includes(CONST.REQUIRED_COMMANDS, value)) {
+             if (this.command !== undefined) _printAndExit('Only single command allowed, see help (--help)');
+             this.command = value;
+        } else if (__includes(CONST.OPTIONS.PASSWORD, value)) {
+            if (this.password !== undefined) _printAndExit('Only single password allowed, see help (--help)');
+            console.log(arguments[index + 1]);
+            if (!__isValidPassword(arguments[index + 1])) _printAndExit('Invalid password, see help (--help)')
+            this.password = arguments[index + 1]
+            println('You just entered a password into a terminal \'history -c\' to clear the bash session');
+        } else if (__includes(CONST.OPTIONAL_ARGUMENTS, value)) {
+            console.log('ADDING ', value, ' WITH ARG ', arguments[index + 1])
+            this.options[value] = arguments[index + 1] || true
+        } else if (!this.options[arguments[index - 1]]) {
             console.log('Adding file name: ', value)
-            this.files.push(value)
+            this.files.push(value);
         }
     });
 }
@@ -66,22 +73,32 @@ function __isValidPassword (password) {
         (__hasUpperCase(password) && __hasLowerCase(password))
 }
 
-Options.prototype.valid = function() {
-    // if (!fs.existsSync(inputPath)) {
-    //     console.error(`No such file or directory: ${inputPath}`);
-    //     process.exit(1);
-    // }
+CryptifyConfig.prototype.getFiles = function() {
+    return this.files;
+}
+
+CryptifyConfig.prototype.getPassword = function() {
+    return this.password;
+}
+
+CryptifyConfig.prototype.getCommand = function() {
+    return this.command;
+}
+
+CryptifyConfig.prototype.getOptions = function() {
+    return this.options;
+}
+
+CryptifyConfig.prototype.isLogVerbose = function () {
+    return this.options[CONST.OPTIONS.LOG[0] || CONST.OPTIONS.LOG[1]]
+}
+
+CryptifyConfig.prototype.valid = function() {
     // function __isValidCipher (cipher) {
     //     if (!cipher) return true;
     //     return crypto.getCiphers().indexOf(cipher) !== -1;
     // }
     //
-    // function __isValidPassword (password) {
-    //     return password !== null &&
-    //         password !== undefined &&
-    //         typeof password === 'string' &&
-    //         password.trim().length >= 8;
-    // }
 }
 
 function println(message) {
@@ -101,7 +118,7 @@ function _printHelpAndExit(message) {
     println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
     println();
     println('   Usage:');
-    println('       cryptify (<file>... (-p <password>) (command) [options] | [other])');
+    println('       cryptify (<file>... (-p \'<password>\') (command) [options] | [other])');
     println('       cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc');
     println('       cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log');
     println('       cryptify --version');
@@ -110,19 +127,21 @@ function _printHelpAndExit(message) {
     println('       -e --encrypt              Encrypt the file(s)');
     println('       -d --decrypt              Decrypt the file(s)');
     println();
+    println('   Required Arguments:');
+    println('       -p --password             Cryptographic key');
+    println();
     println('   Optional Arguments:');
     println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
-    println('       -k --keep (true|false)    Keep the original file(s) (Default: false)');
-    println('       -l --log (true|false)     Log verbose (Default: false)');
-    println();
-    println('   Other:');
+    println('       -k --keep                 Keep the original file(s)');
+    println('       -l --log                  Log verbose');
     println('       -h --help                 Show this menu');
     println('       -v --version              Show version');
     println();
     println('   Password Requirements:');
-    println('       1) Minimum length: 8');
-    println('       2) Requires at least 1 special character');
-    println('       3) Combination of uppercase and lowercase');
+    println('       1) Must wrap password in single quotes');
+    println('       2) Minimum length: 8');
+    println('       3) Requires at least 1 special character');
+    println('       4) Combination of uppercase and lowercase');
     exit();
 }
 
@@ -131,40 +150,59 @@ function exit(code) {
 }
 
 module.exports = function(arguments) {
+    console.log(arguments);
     if (arguments.length === 0) {
         _printHelpAndExit();
     } else {
-        const options = new Options(arguments);
-        const validArgs = Object.keys(options.arguments);
-        const length = validArgs.length;
-        if (length === 0) {
-            _printAndExit('Missing required command, see help (--help)');
-        } else if (length === 1) {
-            if (__includes(CONST.OPTIONS.HELP, validArgs[0])) _printHelpAndExit();
-            if (__includes(CONST.OPTIONS.VERSION, validArgs[0])) _printAndExit(CONST.CRYPTIFY_VERSION);
-            _printAndExit('Invalid usage, see help (--help)');
-        } else if (length >= 2) {
-            // Ensure valid password
-            const password = options.arguments[CONST.OPTIONS.PASSWORD[0] || CONST.OPTIONS.PASSWORD[1]];
-            if (!password) _printAndExit('Missing required password, see help (--help)');
-            if (!__isValidPassword(password)) _printAndExit('Invalid password, see help (--help)')
-            // Ensure valid files
-            if (options.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
-            options.files.forEach(file => {
-                if (!fs.existsSync(file)) {
-                    _printAndExit(`No such file or directory: ${file}`);
-                }
-            });
+        const config = new CryptifyConfig(arguments);
 
-            println();
-            console.log('ValidArgs: ', length, validArgs);
-            console.log('    Files: ', options.files.length, options.files);
-            console.log('   ArgMap: ', JSON.stringify(options.arguments));
-            println();
 
-        }
+
+        // const files = config.files;
+        // const validArgs = Object.keys(config.arguments);
+        // const argsLength = validArgs.length;
+
+        // if (argsLength === 0) _printAndExit('Missing required command, see help (--help)');
+        // if (files.length === 0 && argsLength === 1) {
+        //     if (__includes(CONST.OPTIONS.HELP, validArgs[0])) _printHelpAndExit();
+        //     if (__includes(CONST.OPTIONS.VERSION, validArgs[0])) _printAndExit(CONST.CRYPTIFY_VERSION);
+        //     _printAndExit('Invalid usage, see help (--help)');
+        // }
+        //
+        // if (argsLength === 0) {
+        //     ;
+        // } else if (argsLength === 1) {
+        //
+        //     if (config.files.length > 0) {
+        //         __cryptify(config);
+        //     } else {
+        //
+        //     }
+        // } else if (argsLength >= 2) {
+        //     // Ensure valid password
+        //     const password = config.arguments[CONST.OPTIONS.PASSWORD[0] || CONST.OPTIONS.PASSWORD[1]];
+        //     if (!password) _printAndExit('Missing required password, see help (--help)');
+        //     if (!__isValidPassword(password)) _printAndExit('Invalid password, see help (--help)')
+        //     // Ensure valid files
+        //     if (config.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
+        //     config.files.forEach(file => {
+        //         if (!fs.existsSync(file)) {
+        //             _printAndExit(`No such file or directory: ${file}`);
+        //         }
+        //     });
+        //     println();
+        //     console.log('ValidArgs: ', argsLength, validArgs);
+        //     console.log('    Files: ', config.files.length, config.files);
+        //     console.log('   ArgMap: ', JSON.stringify(config.arguments));
+        //     println();
+        // }
     }
 };
+
+function __cryptify(options) {
+    console.log('Looks like we should process now?')
+    console.log(JSON.stringify(options));
+}
 
 /**
  * Encrypt a file
