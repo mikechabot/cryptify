@@ -244,7 +244,7 @@ function _decrypt (options, cipherAlgorithm) {
         const inputPath = path.join(file);
         const outputPath = path.join(`${file}.${TEMP}`);
         // Generate cipher and open streams
-        const cipher = crypto.createDecipher(cipherAlgorithm, options.getPassword);
+        const cipher = crypto.createDecipher(cipherAlgorithm, options.getPassword());
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
         // Encrypt files
