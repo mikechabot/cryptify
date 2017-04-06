@@ -126,7 +126,7 @@ function __exit(code) {
 }
 
 function _printHelpAndExit() {
-    println()
+    println();
     println('   Cryptify v1.0 File-based Encryption Utility')
     println('   https://www.npmjs.com/package/cryptify');
     println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
@@ -157,10 +157,10 @@ function _printHelpAndExit() {
     println('       PowerShell                single-quotes');
     println();
     println('   Password Requirements:');
-    println('       1) Minimum length: 8');
-    println('       2) Requires at least 1 special character');
-    println('       2) Requires at least 1 numeric character');
-    println('       4) Combination of uppercase and lowercase');
+    println('       1) Minimum length: 8 characters');
+    println('       2) Must contain at least 1 special character');
+    println('       3) Must contain at least 1 numeric character');
+    println('       4) Must contain a combination of uppercase and lowercase');
     __exit();
 }
 
