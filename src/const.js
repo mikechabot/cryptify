@@ -1,9 +1,11 @@
+var packageJson = require('../package.json');
+
 /**
  * Cryptify constants
  * @author Mike Chabot
  */
 
-const CRYPTIFY_VERSION = '1.0';
+const CRYPTIFY_VERSION = packageJson.version;
 
 /**
  * Password special characters
