@@ -1,7 +1,7 @@
 {
   "name": "cryptify",
-  "version": "1.0.4",
-  "description": "File-based encryption with Node.js",
+  "version": "1.0.45,
+  "description": "File-based encryption utility for Node.js",
   "main": "./index.js",
   "bin": "./index.js",
   "scripts": {
@@ -15,11 +15,12 @@
   "keywords": [
     "encryption",
     "decryption",
-    "file-based",
-    "encryption",
+    "file-based encryption",
     "crypto",
+    "Node.js encryption"
     "javascript",
-    "encryption"
+    "node.js",
+    "node"
   ],
   "author": "Mike Chabot",
   "license": "GPL-2.0",
