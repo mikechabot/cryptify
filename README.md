@@ -4,6 +4,9 @@ File-based encryption (FBE) with Node.js
 - [Installation](#installation)
 - [Usage](#usage)
 - [Recommendations](#recommendations)
+  - [Bash](#bash)
+  - [Windows Command Prompt](#cmd)
+  - [Windows Powershell](#ps)
 
 ## <a name="cryptify#installation">Installation</a>
 - ```$ npm i -g cryptify```
@@ -44,7 +47,7 @@ File-based encryption (FBE) with Node.js
 ## <a name="cryptify#recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.\
 
-### Bash
+### <a name="cryptify#bash">Bash</a>
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
 
 1. **Tactical Approach:** Clear a specific session entry
@@ -65,7 +68,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         (open shell)
         $ cat $HISTFILE
         exit
-### Windows Command Prompt
+### <a name="cryptify#cmd">Windows Command Prompt</a>
 Windows does not store history between command prompt sessions.
 1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
@@ -74,7 +77,7 @@ Windows does not store history between command prompt sessions.
         C:\Users\[user]> cryptify ./myfile -p mySecretKey
         C:\Users\[user]> exit
 
-### Windows PowerShell
+### <a name="cryptify#ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
 2. However, deleting the file PowerShell's history does do the trick.
 
