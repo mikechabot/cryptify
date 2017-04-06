@@ -4,6 +4,12 @@
  */
 
 const CRYPTIFY_VERSION = '1.0';
+
+/**
+ * Password special characters
+ * https://www.owasp.org/index.php/Password_special_characters
+ * @type {[*]}
+ */
 const SPECIAL_CHARACTERS = [
     '!', '"', '#', '$', '%', '&', '\'', '(',
     ')', '*', '+', ',', '-', '.', '/', ':',
@@ -73,6 +79,7 @@ const TAKES_ARGUMENT = [
 module.exports = {
     OPTIONS,
     REQUIRED_COMMANDS,
+    OPTIONAL_ARGUMENTS,
     OTHER_ARGUMENTS,
     ALLOWED_ARGUMENTS,
     TAKES_ARGUMENT,
