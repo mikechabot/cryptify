@@ -52,31 +52,31 @@ function _isValidPassword (password) {
         (__hasUpperCase(password) && __hasLowerCase(password))
 }
 
-function CryptifyConfig(arguments) {
-    this.command;
-    this.password;
-    this.cipher;
+function CryptifyConfig(configArguments) {
+    this.command = undefined;
+    this.password = undefined;
+    this.cipher = undefined;
     this.files = [];
     this.options = {};
     // Parse arguments from CLI
-    arguments.forEach((value, index) => {
+    configArguments.forEach((value, index) => {
         if (_includes(CONST.REQUIRED_COMMANDS, value)) {
             this.command !== undefined
                 ? _printAndExit('Only single command allowed, see help (--help)')
                 : this.command = value
         } else if (_includes(CONST.OPTIONS.PASSWORD, value)) {
             if (this.password !== undefined) _printAndExit('Only single password allowed, see help (--help)');
-            if (!_isValidPassword(arguments[index + 1])) _printAndExit('Invalid password, see help (--help)')
-            this.password = arguments[index + 1];
+            if (!_isValidPassword(configArguments[index + 1])) _printAndExit('Invalid password, see help (--help)')
+            this.password = configArguments[index + 1];
         } else if (_includes(CONST.OPTIONS.CIPHER, value)) {
             if (this.cipher !== undefined) _printAndExit('Only single cipher allowed, see help (--help)');
-            if (!_isValidCipher(arguments[index + 1])) _printAndExit('Invalid cipher, see help (--help)');
-            this.cipher = arguments[index + 1];
+            if (!_isValidCipher(configArguments[index + 1])) _printAndExit('Invalid cipher, see help (--help)');
+            this.cipher = configArguments[index + 1];
         } else if (_includes(CONST.OPTIONAL_ARGUMENTS_NO_ARGS, value)) {
             this.options[value] = true;
         } else if (
-            !_includes(CONST.OPTIONS.PASSWORD, arguments[index - 1]) &&
-            !this.options[arguments[index - 1]]
+            !_includes(CONST.OPTIONS.PASSWORD, configArguments[index - 1]) &&
+            !this.options[configArguments[index - 1]]
         ) {
             if (!fs.existsSync(value)) {
                 _printAndExit(`No such file or directory: ${value}`);
@@ -174,11 +174,11 @@ function _printPasswordWarning() {
     println();
 }
 
-module.exports = function(arguments) {
-    if (arguments.length === 0) {
+module.exports = function(configArguments) {
+    if (configArguments.length === 0) {
         _printHelpAndExit();
     } else {
-        const config = new CryptifyConfig(arguments);
+        const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
         _cryptify(config);
     }
@@ -195,13 +195,13 @@ function _cryptify(options) {
  * @param {Object} options
  * @private
  */
-function _encrypt (options, cipherAlgo) {
+function _encrypt (options, cipherAlgorithm) {
     options.files.forEach(file => {
         // Derive paths
         const inputPath = path.join(file);
         const outputPath = path.join(`${file}.${TEMP}`);
         // Generate cipher and open streams
-        const cipher = crypto.createCipher(cipherAlgo, options.password);
+        const cipher = crypto.createCipher(cipherAlgorithm, options.password);
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
         // Encrypt files
@@ -216,15 +216,16 @@ function _encrypt (options, cipherAlgo) {
 /**
  * Decrypt a file
  * @param {Object} options
+ *
  * @private
  */
-function _decrypt (options, cipherAlgo) {
+function _decrypt (options, cipherAlgorithm) {
     options.files.forEach(file => {
         // Derive paths
         const inputPath = path.join(file);
         const outputPath = path.join(`${file}.${TEMP}`);
         // Generate cipher and open streams
-        const cipher = crypto.createDecipher(cipherAlgo, options.password);
+        const cipher = crypto.createDecipher(cipherAlgorithm, options.password);
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
         // Encrypt files
