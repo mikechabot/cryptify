@@ -85,6 +85,8 @@ function CryptifyConfig (configArguments) {
             }
         }
     });
+    if (this.showVersion()) _printAndExit(CONST.CRYPTIFY_VERSION);
+    if (this.showHelp()) _printHelpAndExit();
     if (this.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
     if (!this.command) _printAndExit('Missing required command, see help (--help)');
     if (!this.password) _printAndExit('Missing required password, see help (--help)');
@@ -102,8 +104,22 @@ CryptifyConfig.prototype.getCommand = function () {
     return this.command;
 };
 
+CryptifyConfig.prototype.getCipher = function () {
+    return this.cipher;
+};
+
 CryptifyConfig.prototype.getOptions = function () {
     return this.options;
+};
+
+CryptifyConfig.prototype.showHelp = function () {
+    return this.options[CONST.OPTIONS.HELP[0]] === true ||
+        this.options[CONST.OPTIONS.HELP[1]] === true;
+};
+
+CryptifyConfig.prototype.showVersion = function () {
+    return this.options[CONST.OPTIONS.VERSION[0]] === true ||
+        this.options[CONST.OPTIONS.VERSION[1]] === true;
 };
 
 CryptifyConfig.prototype.doEncrypt = function () {
@@ -112,7 +128,8 @@ CryptifyConfig.prototype.doEncrypt = function () {
 };
 
 CryptifyConfig.prototype.isVerbose = function () {
-    return this.options[CONST.OPTIONS.LOG[0] || CONST.OPTIONS.LOG[1]] === true;
+    return this.command === CONST.OPTIONS.LOG[0] ||
+        this.command === CONST.OPTIONS.LOG[1];
 };
 
 function println (message) {
@@ -130,7 +147,7 @@ function __exit (code) {
 
 function _printHelpAndExit () {
     println();
-    println('   Cryptify v1.0 File-based Encryption Utility');
+    println(`   Cryptify v${CONST.CRYPTIFY_VERSION} File-based Encryption Utility`);
     println('   https://www.npmjs.com/package/cryptify');
     println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
     println();
@@ -189,8 +206,8 @@ module.exports = function (configArguments) {
 
 function _cryptify (options) {
     options.doEncrypt()
-        ? _encrypt(options, options.cipher || DEFAULT_CIPHER)
-        : _decrypt(options, options.cipher || DEFAULT_CIPHER);
+        ? _encrypt(options, options.getCipher() || DEFAULT_CIPHER)
+        : _decrypt(options, options.getCipher() || DEFAULT_CIPHER);
 }
 
 /**
@@ -199,12 +216,12 @@ function _cryptify (options) {
  * @private
  */
 function _encrypt (options, cipherAlgorithm) {
-    options.files.forEach(file => {
+    options.getFiles().forEach(file => {
         // Derive paths
         const inputPath = path.join(file);
         const outputPath = path.join(`${file}.${TEMP}`);
         // Generate cipher and open streams
-        const cipher = crypto.createCipher(cipherAlgorithm, options.password);
+        const cipher = crypto.createCipher(cipherAlgorithm, options.getPassword());
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
         // Encrypt files
@@ -222,12 +239,12 @@ function _encrypt (options, cipherAlgorithm) {
  * @private
  */
 function _decrypt (options, cipherAlgorithm) {
-    options.files.forEach(file => {
+    options.getFiles().forEach(file => {
         // Derive paths
         const inputPath = path.join(file);
         const outputPath = path.join(`${file}.${TEMP}`);
         // Generate cipher and open streams
-        const cipher = crypto.createDecipher(cipherAlgorithm, options.password);
+        const cipher = crypto.createDecipher(cipherAlgorithm, options.getPassword);
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
         // Encrypt files
