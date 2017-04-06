@@ -76,6 +76,7 @@ function CryptifyConfig (configArguments) {
             this.options[value] = true;
         } else if (
             !_includes(CONST.OPTIONS.PASSWORD, configArguments[index - 1]) &&
+            !_includes(CONST.OPTIONS.CIPHER, configArguments[index - 1]) &&
             !this.options[configArguments[index - 1]]
         ) {
             if (!fs.existsSync(value)) {
@@ -87,13 +88,17 @@ function CryptifyConfig (configArguments) {
     });
     if (this.showVersion()) _printAndExit(CONST.CRYPTIFY_VERSION);
     if (this.showHelp()) _printHelpAndExit();
-    if (this.files.length === 0) _printAndExit('Missing required file(s), see help (--help)');
+    if (!this.hasFiles()) _printAndExit('Missing required file(s), see help (--help)');
     if (!this.command) _printAndExit('Missing required command, see help (--help)');
     if (!this.password) _printAndExit('Missing required password, see help (--help)');
 }
 
 CryptifyConfig.prototype.getFiles = function () {
     return this.files;
+};
+
+CryptifyConfig.prototype.hasFiles = function () {
+    return this.files.length > 0;
 };
 
 CryptifyConfig.prototype.getPassword = function () {
