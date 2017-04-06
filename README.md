@@ -13,7 +13,7 @@ File-based encryption (FBE) with Node.js
 
 ## <a name="cryptify#usage">Usage</a>
 
-    Cryptify v1.1.6 File-based Encryption Utility
+    Cryptify v1.1.7 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
