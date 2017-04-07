@@ -13,7 +13,7 @@ File-based encryption (FBE) with Node.js
 
 ## <a name="cryptify#usage">Usage</a>
 
-    Cryptify v1.1.9 File-based Encryption Utility
+    Cryptify v1.1.10 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -36,6 +36,11 @@ File-based encryption (FBE) with Node.js
        -l --log                  Log verbose
        -h --help                 Show this menu
        -v --version              Show version
+
+    Required Password Wrapping:
+       Bash                      single-quotes
+       Command Prompt            double-quotes
+       PowerShell                single-quotes
 
     Password Requirements:
        1) Minimum length: 8 characters
