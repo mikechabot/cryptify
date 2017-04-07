@@ -39,3 +39,6 @@ jspm_packages
 #IntelliJ
 .idea/
 *.iml
+
+# Test files
+*.tst

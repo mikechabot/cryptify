@@ -1,4 +1,4 @@
-var packageJson = require('../package.json');
+let packageJson = require('../package.json');
 
 /**
  * Cryptify constants
@@ -47,17 +47,23 @@ const REQUIRED_COMMANDS = [
  * Optional arguments
  * @type {[*]}
  */
-const OPTIONAL_ARGUMENTS_NO_ARGS = [
+const OPTIONS_DO_NOT_TAKE_ARGUMENT = [
     ...OPTIONS.KEEP,
     ...OPTIONS.LOG,
     ...OPTIONS.HELP,
     ...OPTIONS.VERSION
 ];
 
+const OPTIONS_TAKE_ARGUMENT = [
+    ...OPTIONS.PASSWORD,
+    ...OPTIONS.CIPHER
+];
+
 module.exports = {
     OPTIONS,
     REQUIRED_COMMANDS,
-    OPTIONAL_ARGUMENTS_NO_ARGS,
+    OPTIONS_DO_NOT_TAKE_ARGUMENT,
+    OPTIONS_TAKE_ARGUMENT,
     CRYPTIFY_VERSION,
     SPECIAL_CHARACTERS
 };
