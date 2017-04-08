@@ -13,7 +13,7 @@ File-based encryption (FBE) with Node.js
 
 ## <a name="cryptify#usage">Usage</a>
 
-    Cryptify v1.1.10 File-based Encryption Utility
+    Cryptify v1.1.11 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -33,7 +33,7 @@ File-based encryption (FBE) with Node.js
     Optional Arguments:
        -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
        -k --keep                 Keep the original file(s)
-       -l --log                  Log verbose
+       -l --log                  Enable debug log
        -h --help                 Show this menu
        -v --version              Show version
 

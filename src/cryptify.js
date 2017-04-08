@@ -1,39 +1,44 @@
 /**
  * Cryptify
  * @author Mike Chabot
- * @description File-based encryption
+ * @description File-based encryption utility for Node.js
  */
 
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-const CONST = require('./const');
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import {
+    OPTION,
+    OPTIONS,
+    REQUIRED_OPTIONS,
+    OPTIONS_WITH_ARGS,
+    OPTIONS_WITH_NO_ARGS,
+    EXTENSION,
+    SPECIAL_CHARACTERS,
+    DEFAULT_CIPHER,
+    CRYPTIFY_VERSION
+} from './const';
 
 const COMMAND = 'command';
 const PASSWORD = 'password';
 const CIPHER = 'cipher';
 const CLOSE_EVENT = 'close';
-const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
-const TEMP = 'temp';
 
-function _includes (array, entry) {
-    if (!array) return false;
-    return array.includes(entry);
-}
-
-function _contains (searchIn, searchFor) {
-    if (!searchIn || !searchFor) return false;
-    return searchFor.some(entry => {
-        return _includes(searchIn, entry);
+function _contains (lookIn, lookFor) {
+    if (!lookIn || !lookFor) return false;
+    return lookFor.some(entry => {
+        return lookIn.includes(entry);
     });
 }
 
-function _getOptionsFromCLI (searchIn, searchFor, getArgument) {
-    return searchIn.map((value, index) => {
-        if (searchFor.includes(value)) {
-            return getArgument ? searchIn[index + 1] : value;
-        }
-    }).filter(value => value);
+function _parseOptions (lookIn, lookFor, getArg) {
+    return lookIn
+        .map((value, index) => {
+            return lookFor.includes(value)
+                ? getArg ? lookIn[index + 1] : value
+                : null;
+        })
+        .filter(value => value);
 }
 
 function _verifyOnlyOne (list, key, allowNone) {
@@ -46,15 +51,15 @@ function _isValidCipher (cipher) {
 }
 
 function _isValidPassword (password) {
-    function __hasUpperCase (str) {
+    function _hasUpperCase (str) {
         if (!str) return false;
         return str.trim().toLowerCase() !== str;
     }
-    function __hasLowerCase (str) {
+    function _hasLowerCase (str) {
         if (!str) return false;
         return str.trim().toUpperCase() !== str;
     }
-    function __hasNumber (str) {
+    function _hasNumber (str) {
         if (!str) return false;
         return /\d/.test(str);
     }
@@ -62,54 +67,71 @@ function _isValidPassword (password) {
         password !== undefined &&
         typeof password === 'string' &&
         password.trim().length >= 8 &&
-        _contains(password.trim().split(''), CONST.SPECIAL_CHARACTERS) &&
-        __hasNumber(password) &&
-        __hasUpperCase(password) &&
-        __hasLowerCase(password);
+        _contains(password.trim().split(''), SPECIAL_CHARACTERS) &&
+        _hasNumber(password) &&
+        _hasUpperCase(password) &&
+        _hasLowerCase(password);
 }
 
-function CryptifyConfig (configArguments) {
-    this.command = undefined;
-    this.password = undefined;
-    this.cipher = undefined;
-    this.files = [];
-    this.options = {};
+function CryptifyConfig (configOptions) {
+    this.command = undefined;       // Encrypt or decrypt
+    this.password = undefined;      // Crypto key
+    this.cipher = undefined;        // Cipher algorithm
+    this.debug = false;             // Debug log
+    this.files = [];                // List of files to be encrypted or decrypted
+    this.options = {};              // Optional arguments
 
-    this.options = _getOptionsFromCLI(configArguments, CONST.OPTIONS_DO_NOT_TAKE_ARGUMENT);
-    const commands = _getOptionsFromCLI(configArguments, CONST.REQUIRED_COMMANDS);
-    const passwords = _getOptionsFromCLI(configArguments, CONST.OPTIONS.PASSWORD, true);
-    const ciphers = _getOptionsFromCLI(configArguments, CONST.OPTIONS.CIPHER, true);
+    this.__init(configOptions);
+}
 
-    // Parse file names from CLI
-    configArguments.forEach((value, index) => {
-        if (!_includes(CONST.REQUIRED_COMMANDS, value) &&
-            !_includes(CONST.OPTIONS.PASSWORD, value) &&
-            !_includes(CONST.OPTIONS.CIPHER, value) &&
-            !_includes(CONST.OPTIONS_DO_NOT_TAKE_ARGUMENT, value) &&
-            !_includes(CONST.OPTIONS_TAKE_ARGUMENT, configArguments[index - 1])
+CryptifyConfig.prototype.__init = function (configOptions) {
+    this.options = _parseOptions(configOptions, OPTIONS_WITH_NO_ARGS);
+
+    // Display version and exit
+    if (this.showVersion()) {
+        _printAndExit(CRYPTIFY_VERSION);
+    }
+
+    // Display help and exit
+    if (this.showHelp()) {
+        _printHelpAndExit();
+    }
+
+    // Set debug mode
+    this.debug = _contains(this.options, OPTION.DEBUG);
+    this.log();
+
+    const commands = _parseOptions(configOptions, REQUIRED_OPTIONS);
+    _verifyOnlyOne(commands, COMMAND);
+    this.command = commands[0];
+    this.log(`Do encrypt? ${this.doEncrypt()}`);
+
+    const passwords = _parseOptions(configOptions, OPTION.PASSWORD, true);
+    _verifyOnlyOne(passwords, PASSWORD);
+    this.password = passwords[0];
+    this.log(`Set password to '${this.getPassword()}'`);
+
+    const ciphers = _parseOptions(configOptions, OPTION.CIPHER, true);
+    _verifyOnlyOne(ciphers, CIPHER, true);
+    this.cipher = ciphers[0] || DEFAULT_CIPHER;
+    this.log(`Set cipher to '${this.getCipher()}'`);
+
+    configOptions.forEach((value, index) => {
+        if (!OPTIONS.includes(value) &&
+            !OPTIONS_WITH_ARGS.includes(configOptions[index - 1])
         ) {
             if (!fs.existsSync(value)) {
                 _printAndExit(`No such file: ${value}`);
             } else if (!this.files.includes(value)) {
+                this.log(`Found file '${value}'...`);
                 this.files.push(value);
             }
         }
     });
 
-    if (this.showVersion()) _printAndExit(CONST.CRYPTIFY_VERSION);
-    if (this.showHelp()) _printHelpAndExit();
-
-    _verifyOnlyOne(commands, COMMAND);
-    _verifyOnlyOne(passwords, PASSWORD);
-    _verifyOnlyOne(ciphers, CIPHER, true);
-
-    this.command = commands[0];
-    this.password = passwords[0];
-    this.cipher = ciphers[0] || DEFAULT_CIPHER;
-
     if (!_isValidPassword(this.getPassword())) _printAndExit('Invalid password, see help (--help)');
     if (!_isValidCipher(this.getCipher())) _printAndExit('Invalid cipher, see help (--help)');
-}
+};
 
 CryptifyConfig.prototype.getFiles = function () {
     return this.files;
@@ -136,83 +158,89 @@ CryptifyConfig.prototype.getOptions = function () {
 };
 
 CryptifyConfig.prototype.showHelp = function () {
-    return _contains(this.options, CONST.OPTIONS.HELP);
+    return _contains(this.options, OPTION.HELP);
 };
 
 CryptifyConfig.prototype.showVersion = function () {
-    return _contains(this.options, CONST.OPTIONS.VERSION);
+    return _contains(this.options, OPTION.VERSION);
 };
 
 CryptifyConfig.prototype.doEncrypt = function () {
-    return this.command === CONST.OPTIONS.ENCRYPT[0] ||
-        this.command === CONST.OPTIONS.ENCRYPT[1];
+    return OPTION.ENCRYPT.includes(this.command);
 };
 
-CryptifyConfig.prototype.isVerbose = function () {
-    return this.command === CONST.OPTIONS.LOG[0] ||
-        this.command === CONST.OPTIONS.LOG[1];
+CryptifyConfig.prototype.isDebug = function () {
+    return this.debug;
 };
 
-function println (message) {
+CryptifyConfig.prototype.log = function (message) {
+    if (this.isDebug()) {
+        !message
+            ? console.log('')
+            : console.log(`   ✓ ${message}`);
+    }
+};
+
+function _println (message) {
     console.log(message || '');
 }
 
 function _printAndExit (message) {
-    println(`${message}`);
-    __exit();
+    _println(`${message}`);
+    _exit();
 }
 
-function __exit (code) {
+function _exit (code) {
     code ? process.exit(code) : process.exit();
 }
 
 function _printHelpAndExit () {
-    println();
-    println(`   Cryptify v${CONST.CRYPTIFY_VERSION} File-based Encryption Utility`);
-    println('   https://www.npmjs.com/package/cryptify');
-    println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
-    println();
-    println('   Usage:');
-    println('       cryptify (<file>... (-p <password>) (command) [options] | [other])');
-    println('       cryptify ./configuration.props -p \'mySecretKey\' -e -c aes-256-cbc');
-    println('       cryptify ./foo.json ./bar.json -p \'mySecretKey\' --decrypt --log');
-    println('       cryptify --version');
-    println();
-    println('   Required Commands:');
-    println('       -e --encrypt              Encrypt the file(s)');
-    println('       -d --decrypt              Decrypt the file(s)');
-    println();
-    println('   Required Arguments:');
-    println('       -p --password             Cryptographic key');
-    println();
-    println('   Optional Arguments:');
-    println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
-    println('       -k --keep                 Keep the original file(s)');
-    println('       -l --log                  Log verbose');
-    println('       -h --help                 Show this menu');
-    println('       -v --version              Show version');
-    println();
-    println('   Required Password Wrapping:');
-    println('       Bash                      single-quotes');
-    println('       Command Prompt            double-quotes');
-    println('       PowerShell                single-quotes');
-    println();
-    println('   Password Requirements:');
-    println('       1) Minimum length: 8 characters');
-    println('       2) Must contain at least 1 special character');
-    println('       3) Must contain at least 1 numeric character');
-    println('       4) Must contain a combination of uppercase and lowercase');
-    __exit();
+    _println();
+    _println(`   Cryptify v${CRYPTIFY_VERSION} File-based Encryption Utility`);
+    _println('   https://www.npmjs.com/package/cryptify');
+    _println('   Implements Node.js Crypto (https://nodejs.org/api/crypto.html)');
+    _println();
+    _println('   Usage:');
+    _println('       cryptify (<file>... (-p <password>) (command) [options] | [other])');
+    _println('       cryptify ./configuration.props -p \'mySecretKey\' -e -c aes-256-cbc');
+    _println('       cryptify ./foo.json ./bar.json -p \'mySecretKey\' --decrypt --log');
+    _println('       cryptify --version');
+    _println();
+    _println('   Required Commands:');
+    _println('       -e --encrypt              Encrypt the file(s)');
+    _println('       -d --decrypt              Decrypt the file(s)');
+    _println();
+    _println('   Required Arguments:');
+    _println('       -p --password             Cryptographic key');
+    _println();
+    _println('   Optional Arguments:');
+    _println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
+    _println('       -k --keep                 Keep the original file(s)');
+    _println('       -l --log                  Enable debug log');
+    _println('       -h --help                 Show this menu');
+    _println('       -v --version              Show version');
+    _println();
+    _println('   Required Password Wrapping:');
+    _println('       Bash                      single-quotes');
+    _println('       Command Prompt            double-quotes');
+    _println('       PowerShell                single-quotes');
+    _println();
+    _println('   Password Requirements:');
+    _println('       1) Minimum length: 8 characters');
+    _println('       2) Must contain at least 1 special character');
+    _println('       3) Must contain at least 1 numeric character');
+    _println('       4) Must contain a combination of uppercase and lowercase');
+    _exit();
 }
 
 function _printPasswordWarning () {
-    println();
-    println('  +----------------------------------------------------------------------+');
-    println('  |   ** NOTE: You just entered a password key into a shell session **   |');
-    println('  |           Strongly consider clearing your session history            |');
-    println('  |        https://github.com/mikechabot/cryptify#recommendations        |');
-    println('  +----------------------------------------------------------------------+');
-    println();
+    _println();
+    _println('  +----------------------------------------------------------------------+');
+    _println('  |   ** NOTE: You just entered a password key into a shell session **   |');
+    _println('  |           Strongly consider clearing your session history            |');
+    _println('  |        https://www.npmjs.com/package/cryptify#recommendations        |');
+    _println('  +----------------------------------------------------------------------+');
+    _println();
 }
 
 module.exports = function (configArguments) {
@@ -225,52 +253,28 @@ module.exports = function (configArguments) {
     }
 };
 
+/**
+ * Encrypt or decrypt a set of files
+ * @param options
+ * @private
+ */
 function _cryptify (options) {
-    options.doEncrypt()
-        ? _encrypt(options, options.getCipher() || DEFAULT_CIPHER)
-        : _decrypt(options, options.getCipher() || DEFAULT_CIPHER);
-}
-
-/**
- * Encrypt a file
- * @param {Object} options
- * @private
- */
-function _encrypt (options, cipherAlgorithm) {
     options.getFiles().forEach(file => {
         // Derive paths
         const inputPath = path.join(file);
-        const outputPath = path.join(`${file}.${TEMP}`);
-        // Generate cipher and open streams
-        const cipher = crypto.createCipher(cipherAlgorithm, options.getPassword());
-        const is = fs.createReadStream(inputPath);
-        const os = fs.createWriteStream(outputPath);
-        // Encrypt files
-        is.pipe(cipher).pipe(os);
-        // Rename file on stream closure
-        os.on(CLOSE_EVENT, function () {
-            fs.renameSync(outputPath, inputPath);
-        });
-    });
-}
+        const outputPath = path.join(`${file}.${EXTENSION}`);
 
-/**
- * Decrypt a file
- * @param {Object} options
- * @private
- */
-function _decrypt (options, cipherAlgorithm) {
-    options.getFiles().forEach(file => {
-        // Derive paths
-        const inputPath = path.join(file);
-        const outputPath = path.join(`${file}.${TEMP}`);
+        const cipherFunc = options.doEncrypt()
+            ? crypto.createCipher
+            : crypto.createDecipher;
+
         // Generate cipher and open streams
-        const cipher = crypto.createDecipher(cipherAlgorithm, options.getPassword());
+        const cipher = cipherFunc(options.getCipher(), options.getPassword());
         const is = fs.createReadStream(inputPath);
         const os = fs.createWriteStream(outputPath);
-        // Encrypt files
+
         is.pipe(cipher).pipe(os);
-        // Rename file on stream closure
+
         os.on(CLOSE_EVENT, function () {
             fs.renameSync(outputPath, inputPath);
         });

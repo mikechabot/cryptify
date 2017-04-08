@@ -1,69 +1,87 @@
-let packageJson = require('../package.json');
+const packageDotJson = require('../package.json');
 
 /**
  * Cryptify constants
  * @author Mike Chabot
  */
 
-const CRYPTIFY_VERSION = packageJson.version;
+export const CRYPTIFY_VERSION = packageDotJson.version;
+export const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
+export const EXTENSION = 'tmp';
+
+/**
+ * Cryptify options
+ * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], KEEP: [*], PASSWORD: [*], DEBUG: [*], HELP: [*], VERSION: [*]}}
+ */
+export const OPTION = {
+    ENCRYPT : ['-e', '--encrypt'],
+    DECRYPT : ['-d', '--decrypt'],
+    CIPHER  : ['-c', '--cipher'],
+    KEEP    : ['-k', '--keep'],
+    PASSWORD: ['-p', '--password'],
+    DEBUG   : ['-l', '--log'],
+    HELP    : ['-h', '--help'],
+    VERSION : ['-v', '--version']
+};
+
+/**
+ * Options that don't require an argument
+ * @type {[*]}
+ */
+export const OPTIONS_WITH_NO_ARGS = [
+    ...OPTION.KEEP,
+    ...OPTION.DEBUG,
+    ...OPTION.HELP,
+    ...OPTION.VERSION
+];
+
+/**
+ * Options that an argument
+ * @type {[*]}
+ */
+export const OPTIONS_WITH_ARGS = [
+    ...OPTION.PASSWORD,
+    ...OPTION.CIPHER
+];
+
+/**
+ * Required options
+ * @type {[*]}
+ */
+export const REQUIRED_OPTIONS = [
+    ...OPTION.ENCRYPT,
+    ...OPTION.DECRYPT
+];
+
+/**
+ * Combined option arrays
+ */
+export const OPTIONS = [
+    ...REQUIRED_OPTIONS,
+    ...OPTIONS_WITH_NO_ARGS,
+    ...OPTIONS_WITH_ARGS
+];
 
 /**
  * Password special characters
  * https://www.owasp.org/index.php/Password_special_characters
  * @type {[*]}
  */
-const SPECIAL_CHARACTERS = [
+export const SPECIAL_CHARACTERS = [
     '!', '"', '#', '$', '%', '&', '\'', '(',
     ')', '*', '+', ',', '-', '.', '/', ':',
     ';', '<', '=', '>', '?', '@', '[', '\\',
     ']', '^', '_', '`', '{', '|', '}', '~'
 ];
 
-/**
- * Cryptify commands
- * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], KEEP: [*], PASSWORD: [*], LOG: [*], HELP: [*], VERSION: [*]}}
- */
-const OPTIONS = {
-    ENCRYPT : ['-e', '--encrypt'],
-    DECRYPT : ['-d', '--decrypt'],
-    CIPHER  : ['-c', '--cipher'],
-    KEEP    : ['-k', '--keep'],
-    PASSWORD: ['-p', '--password'],
-    LOG     : ['-l', '--log'],
-    HELP    : ['-h', '--help'],
-    VERSION : ['-v', '--version']
-};
-
-/**
- * Required commands
- * @type {[*]}
- */
-const REQUIRED_COMMANDS = [
-    ...OPTIONS.ENCRYPT,
-    ...OPTIONS.DECRYPT
-];
-
-/**
- * Optional arguments
- * @type {[*]}
- */
-const OPTIONS_DO_NOT_TAKE_ARGUMENT = [
-    ...OPTIONS.KEEP,
-    ...OPTIONS.LOG,
-    ...OPTIONS.HELP,
-    ...OPTIONS.VERSION
-];
-
-const OPTIONS_TAKE_ARGUMENT = [
-    ...OPTIONS.PASSWORD,
-    ...OPTIONS.CIPHER
-];
-
-module.exports = {
+export default {
+    OPTION,
     OPTIONS,
-    REQUIRED_COMMANDS,
-    OPTIONS_DO_NOT_TAKE_ARGUMENT,
-    OPTIONS_TAKE_ARGUMENT,
+    REQUIRED_OPTIONS,
+    OPTIONS_WITH_NO_ARGS,
+    OPTIONS_WITH_ARGS,
+    SPECIAL_CHARACTERS,
     CRYPTIFY_VERSION,
-    SPECIAL_CHARACTERS
+    DEFAULT_CIPHER,
+    EXTENSION
 };
