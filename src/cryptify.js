@@ -221,7 +221,7 @@ function _printHelpAndExit () {
     _println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
     _println('       -k --keep                 Keep the original file(s)');
     _println('       -l --log                  Enable debug log');
-    _println('       -r --return               Return file contents on finish');
+    _println('       -r --return               Return file contents on finish (--decrypt only)');
     _println('       -h --help                 Show this menu');
     _println('       -v --version              Show version');
     _println();
@@ -254,11 +254,10 @@ module.exports = function (configArguments) {
     } else {
         const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
-        return new Promise(resolve => {
-            if (!config.doReturnFiles()) {
-                _cryptify(config);
-                resolve();
-            } else {
+        if (!config.doReturnFiles() || config.doEncrypt()) {
+            _cryptify(config);
+        } else {
+            return new Promise(resolve => {
                 _cryptify(config)
                     .then(() => {
                         const fileContents = [];
@@ -267,8 +266,8 @@ module.exports = function (configArguments) {
                         });
                         resolve(fileContents);
                     });
-            }
-        });
+            });
+        }
     }
 };
 
