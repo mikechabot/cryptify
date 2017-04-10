@@ -254,16 +254,21 @@ module.exports = function (configArguments) {
     } else {
         const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
-        _cryptify(config)
-            .then(() => {
-                if (config.doReturnFiles()) {
-                    const contents = [];
-                    config.getFiles().forEach(file => {
-                        contents.push(fs.readFileSync(file, 'utf8'));
+        return new Promise(resolve => {
+            if (!config.doReturnFiles()) {
+                _cryptify(config);
+                resolve();
+            } else {
+                _cryptify(config)
+                    .then(() => {
+                        const fileContents = [];
+                        config.getFiles().forEach(file => {
+                            fileContents.push(fs.readFileSync(file, 'utf8'));
+                        });
+                        resolve(fileContents);
                     });
-                    return contents;
-                }
-            });
+            }
+        });
     }
 };
 
