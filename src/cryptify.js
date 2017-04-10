@@ -169,6 +169,10 @@ CryptifyConfig.prototype.doEncrypt = function () {
     return OPTION.ENCRYPT.includes(this.command);
 };
 
+CryptifyConfig.prototype.doReturnFiles = function () {
+    return _contains(this.options, OPTION.RETURN_FILE);
+};
+
 CryptifyConfig.prototype.isDebug = function () {
     return this.debug;
 };
@@ -217,6 +221,7 @@ function _printHelpAndExit () {
     _println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
     _println('       -k --keep                 Keep the original file(s)');
     _println('       -l --log                  Enable debug log');
+    _println('       -r --return               Return file contents on finish');
     _println('       -h --help                 Show this menu');
     _println('       -v --version              Show version');
     _println();
@@ -249,7 +254,16 @@ module.exports = function (configArguments) {
     } else {
         const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
-        _cryptify(config);
+        _cryptify(config)
+            .then(() => {
+                if (config.doReturnFiles()) {
+                    const contents = [];
+                    config.getFiles().forEach(file => {
+                        contents.push(fs.readFileSync(file, 'utf8'));
+                    });
+                    return contents;
+                }
+            });
     }
 };
 
@@ -259,24 +273,30 @@ module.exports = function (configArguments) {
  * @private
  */
 function _cryptify (options) {
-    options.getFiles().forEach(file => {
-        // Derive paths
-        const inputPath = path.join(file);
-        const outputPath = path.join(`${file}.${EXTENSION}`);
-
-        const cipherFunc = options.doEncrypt()
-            ? crypto.createCipher
-            : crypto.createDecipher;
-
-        // Generate cipher and open streams
-        const cipher = cipherFunc(options.getCipher(), options.getPassword());
-        const is = fs.createReadStream(inputPath);
-        const os = fs.createWriteStream(outputPath);
-
-        is.pipe(cipher).pipe(os);
-
-        os.on(CLOSE_EVENT, function () {
-            fs.renameSync(outputPath, inputPath);
+    return new Promise((resolve) => {
+        let closeEventCount = 0;
+        options.getFiles().forEach(file => {
+            // Derive paths
+            const inputPath = path.join(file);
+            const outputPath = path.join(`${file}.${EXTENSION}`);
+            // Encrypt or decrypt
+            const cipherFunc = options.doEncrypt()
+                ? crypto.createCipher
+                : crypto.createDecipher;
+            // Generate cipher and open streams
+            const cipher = cipherFunc(options.getCipher(), options.getPassword());
+            const is = fs.createReadStream(inputPath);
+            const os = fs.createWriteStream(outputPath);
+            // Perform operation
+            is.pipe(cipher).pipe(os);
+            // Rename on close
+            os.on(CLOSE_EVENT, function () {
+                fs.renameSync(outputPath, inputPath);
+                closeEventCount++;
+                if (closeEventCount === options.getFiles().length) {
+                    resolve(closeEventCount);
+                }
+            });
         });
     });
 }

@@ -14,14 +14,15 @@ export const EXTENSION = 'tmp';
  * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], KEEP: [*], PASSWORD: [*], DEBUG: [*], HELP: [*], VERSION: [*]}}
  */
 export const OPTION = {
-    ENCRYPT : ['-e', '--encrypt'],
-    DECRYPT : ['-d', '--decrypt'],
-    CIPHER  : ['-c', '--cipher'],
-    KEEP    : ['-k', '--keep'],
-    PASSWORD: ['-p', '--password'],
-    DEBUG   : ['-l', '--log'],
-    HELP    : ['-h', '--help'],
-    VERSION : ['-v', '--version']
+    ENCRYPT    : ['-e', '--encrypt'],
+    DECRYPT    : ['-d', '--decrypt'],
+    CIPHER     : ['-c', '--cipher'],
+    KEEP       : ['-k', '--keep'],
+    PASSWORD   : ['-p', '--password'],
+    DEBUG      : ['-l', '--log'],
+    RETURN_FILE: ['-r', '--return'],
+    HELP       : ['-h', '--help'],
+    VERSION    : ['-v', '--version']
 };
 
 /**
@@ -32,7 +33,8 @@ export const OPTIONS_WITH_NO_ARGS = [
     ...OPTION.KEEP,
     ...OPTION.DEBUG,
     ...OPTION.HELP,
-    ...OPTION.VERSION
+    ...OPTION.VERSION,
+    ...OPTION.RETURN_FILE
 ];
 
 /**
