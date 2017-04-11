@@ -16,11 +16,13 @@ import {
     EXTENSION,
     SPECIAL_CHARACTERS,
     DEFAULT_CIPHER,
+    DEFAULT_ENCODING,
     CRYPTIFY_VERSION
 } from './const';
 
 const COMMAND = 'command';
 const PASSWORD = 'password';
+const ENCODING = 'encoding';
 const CIPHER = 'cipher';
 const CLOSE_EVENT = 'close';
 
@@ -43,7 +45,10 @@ function _parseOptions (lookIn, lookFor, getArg) {
 
 function _verifyOnlyOne (list, key, allowNone) {
     if (!allowNone && list.length === 0) _printAndExit(`Missing required ${key}, see help (--help)'`);
-    if (list.length > 1) _printAndExit(`Only single ${key} allowed, see help (--help)'`);
+    if (list.length > 1) {
+        _println();
+        _printAndExit(`   ✘ Only single ${key} allowed, see help (--help)'`)
+    }
 }
 
 function _isValidCipher (cipher) {
@@ -77,6 +82,7 @@ function CryptifyConfig (configOptions) {
     this.command = undefined;       // Encrypt or decrypt
     this.password = undefined;      // Crypto key
     this.cipher = undefined;        // Cipher algorithm
+    this.encoding = undefined;      // Return file encoding
     this.debug = false;             // Debug log
     this.files = [];                // List of files to be encrypted or decrypted
     this.options = {};              // Optional arguments
@@ -116,6 +122,11 @@ CryptifyConfig.prototype.__init = function (configOptions) {
     this.cipher = ciphers[0] || DEFAULT_CIPHER;
     this.log(`Set cipher to '${this.getCipher()}'`);
 
+    const encoding = _parseOptions(configOptions, OPTION.RETURN_FILE, true);
+    _verifyOnlyOne(encoding, ENCODING, true);
+    this.encoding = encoding[0] || DEFAULT_ENCODING;
+    this.log(`Set encoding to '${this.getEncoding()}'`);
+
     configOptions.forEach((value, index) => {
         if (!OPTIONS.includes(value) &&
             !OPTIONS_WITH_ARGS.includes(configOptions[index - 1])
@@ -151,6 +162,10 @@ CryptifyConfig.prototype.getCommand = function () {
 
 CryptifyConfig.prototype.getCipher = function () {
     return this.cipher;
+};
+
+CryptifyConfig.prototype.getEncoding = function () {
+    return this.encoding;
 };
 
 CryptifyConfig.prototype.getOptions = function () {
@@ -221,7 +236,7 @@ function _printHelpAndExit () {
     _println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
     _println('       -k --keep                 Keep the original file(s)');
     _println('       -l --log                  Enable debug log');
-    _println('       -r --return               Return file contents on finish (--decrypt only)');
+    _println('       -r --return <encoding>    Return file contents, decrypt only (Default: utf8)');
     _println('       -h --help                 Show this menu');
     _println('       -v --version              Show version');
     _println();
@@ -254,19 +269,18 @@ module.exports = function (configArguments) {
     } else {
         const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
-
         return new Promise(resolve => {
             _cryptify(config)
                 .then((closeEventCount) => {
                     _println();
-                    _println(`   ✓ Done with with ${closeEventCount} files(s)`);
+                    _println(`   ✓ Done with ${closeEventCount} files(s)`);
                     _println();
                     if (!config.doReturnFiles() || config.doEncrypt()) {
                         resolve();
                     } else {
                         const fileContents = [];
                         config.getFiles().forEach(file => {
-                            fileContents.push(fs.readFileSync(file, 'utf8'));
+                            fileContents.push(fs.readFileSync(file, config.getEncoding()));
                         });
                         resolve(fileContents);
                     }

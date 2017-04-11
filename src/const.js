@@ -7,6 +7,7 @@ const packageDotJson = require('../package.json');
 
 export const CRYPTIFY_VERSION = packageDotJson.version;
 export const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
+export const DEFAULT_ENCODING = 'utf8';
 export const EXTENSION = 'tmp';
 
 /**
@@ -33,8 +34,7 @@ export const OPTIONS_WITH_NO_ARGS = [
     ...OPTION.KEEP,
     ...OPTION.DEBUG,
     ...OPTION.HELP,
-    ...OPTION.VERSION,
-    ...OPTION.RETURN_FILE
+    ...OPTION.VERSION
 ];
 
 /**
@@ -43,7 +43,8 @@ export const OPTIONS_WITH_NO_ARGS = [
  */
 export const OPTIONS_WITH_ARGS = [
     ...OPTION.PASSWORD,
-    ...OPTION.CIPHER
+    ...OPTION.CIPHER,
+    ...OPTION.RETURN_FILE
 ];
 
 /**
