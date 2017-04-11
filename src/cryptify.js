@@ -180,8 +180,8 @@ CryptifyConfig.prototype.isDebug = function () {
 CryptifyConfig.prototype.log = function (message) {
     if (this.isDebug()) {
         !message
-            ? console.log('')
-            : console.log(`   ✓ ${message}`);
+            ? _println('')
+            : _println(`   ✓ ${message}`);
     }
 };
 
@@ -254,20 +254,24 @@ module.exports = function (configArguments) {
     } else {
         const config = new CryptifyConfig(configArguments);
         _printPasswordWarning();
-        if (!config.doReturnFiles() || config.doEncrypt()) {
-            _cryptify(config);
-        } else {
-            return new Promise(resolve => {
-                _cryptify(config)
-                    .then(() => {
+
+        return new Promise(resolve => {
+            _cryptify(config)
+                .then((closeEventCount) => {
+                    _println();
+                    _println(`   ✓ Done with with ${closeEventCount} files(s)`);
+                    _println();
+                    if (!config.doReturnFiles() || config.doEncrypt()) {
+                        resolve();
+                    } else {
                         const fileContents = [];
                         config.getFiles().forEach(file => {
                             fileContents.push(fs.readFileSync(file, 'utf8'));
                         });
                         resolve(fileContents);
-                    });
-            });
-        }
+                    }
+                });
+        });
     }
 };
 
