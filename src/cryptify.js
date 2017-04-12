@@ -13,7 +13,7 @@ import {
     REQUIRED_OPTIONS,
     OPTIONS_WITH_ARGS,
     OPTIONS_WITH_NO_ARGS,
-    EXTENSION,
+    EXTENSIONS,
     SPECIAL_CHARACTERS,
     DEFAULT_CIPHER,
     DEFAULT_ENCODING,
@@ -47,7 +47,7 @@ function _verifyOnlyOne (list, key, allowNone) {
     if (!allowNone && list.length === 0) _printAndExit(`Missing required ${key}, see help (--help)'`);
     if (list.length > 1) {
         _println();
-        _printAndExit(`   ✘ Only single ${key} allowed, see help (--help)'`)
+        _printAndExit(`   ✘ Only single ${key} allowed, see help (--help)'`);
     }
 }
 
@@ -184,8 +184,20 @@ CryptifyConfig.prototype.doEncrypt = function () {
     return OPTION.ENCRYPT.includes(this.command);
 };
 
+CryptifyConfig.prototype.getCipherFunction = function () {
+    return this.doEncrypt() ? crypto.createCipher : crypto.createDecipher;
+};
+
+CryptifyConfig.prototype.getExtension = function () {
+    return this.doEncrypt() ? EXTENSIONS.ENCRYPT : EXTENSIONS.DECRYPT;
+};
+
 CryptifyConfig.prototype.doReturnFiles = function () {
     return _contains(this.options, OPTION.RETURN_FILE);
+};
+
+CryptifyConfig.prototype.doKeepFiles = function () {
+    return _contains(this.options, OPTION.KEEP);
 };
 
 CryptifyConfig.prototype.isDebug = function () {
@@ -300,20 +312,18 @@ function _cryptify (options) {
         options.getFiles().forEach(file => {
             // Derive paths
             const inputPath = path.join(file);
-            const outputPath = path.join(`${file}.${EXTENSION}`);
-            // Encrypt or decrypt
-            const cipherFunc = options.doEncrypt()
-                ? crypto.createCipher
-                : crypto.createDecipher;
+            const outputPath = path.join(`${file}.${options.getExtension()}`);
             // Generate cipher and open streams
-            const cipher = cipherFunc(options.getCipher(), options.getPassword());
+            const cipher = options.getCipherFunction()(options.getCipher(), options.getPassword());
             const is = fs.createReadStream(inputPath);
             const os = fs.createWriteStream(outputPath);
             // Perform operation
             is.pipe(cipher).pipe(os);
             // Rename on close
             os.on(CLOSE_EVENT, function () {
-                fs.renameSync(outputPath, inputPath);
+                if (!options.doKeepFiles()) {
+                    fs.renameSync(outputPath, inputPath);
+                }
                 closeEventCount++;
                 if (closeEventCount === options.getFiles().length) {
                     resolve(closeEventCount);

@@ -8,7 +8,10 @@ const packageDotJson = require('../package.json');
 export const CRYPTIFY_VERSION = packageDotJson.version;
 export const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
 export const DEFAULT_ENCODING = 'utf8';
-export const EXTENSION = 'tmp';
+export const EXTENSIONS = {
+    ENCRYPT: 'enc',
+    DECRYPT: 'dec'
+};
 
 /**
  * Cryptify options
@@ -86,5 +89,5 @@ export default {
     SPECIAL_CHARACTERS,
     CRYPTIFY_VERSION,
     DEFAULT_CIPHER,
-    EXTENSION
+    EXTENSIONS
 };
