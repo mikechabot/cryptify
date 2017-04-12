@@ -134,7 +134,7 @@ CryptifyConfig.prototype.__init = function (configOptions) {
             if (!fs.existsSync(value)) {
                 _printAndExit(`No such file: ${value}`);
             } else if (!this.files.includes(value)) {
-                this.log(`Found file '${value}'...`);
+                this.log(`Found file '${value}'`);
                 this.files.push(value);
             }
         }
@@ -280,13 +280,12 @@ module.exports = function (configArguments) {
         _printHelpAndExit();
     } else {
         const config = new CryptifyConfig(configArguments);
-        _printPasswordWarning();
         return new Promise(resolve => {
             _cryptify(config)
                 .then((closeEventCount) => {
                     _println();
                     _println(`   ✓ Done with ${closeEventCount} files(s)`);
-                    _println();
+                    _printPasswordWarning();
                     if (!config.doReturnFiles() || config.doEncrypt()) {
                         resolve();
                     } else {
@@ -309,23 +308,36 @@ module.exports = function (configArguments) {
 function _cryptify (options) {
     return new Promise((resolve) => {
         let closeEventCount = 0;
+
+        options.log(`Acting on ${options.getFiles().length} file(s)`);
         options.getFiles().forEach(file => {
-            // Derive paths
+            options.log('Deriving input and output paths');
             const inputPath = path.join(file);
             const outputPath = path.join(`${file}.${options.getExtension()}`);
-            // Generate cipher and open streams
+
+            options.log(`Acting on ${inputPath}`);
+
+            options.log('Getting cipher');
             const cipher = options.getCipherFunction()(options.getCipher(), options.getPassword());
+
+            options.log('Creating input stream');
             const is = fs.createReadStream(inputPath);
+
+            options.log('Creating output stream');
             const os = fs.createWriteStream(outputPath);
-            // Perform operation
+
+            options.log('Piping to output file');
             is.pipe(cipher).pipe(os);
             // Rename on close
             os.on(CLOSE_EVENT, function () {
                 if (!options.doKeepFiles()) {
+                    options.log(`Renaming "${outputPath}" to "${inputPath}"`);
                     fs.renameSync(outputPath, inputPath);
                 }
                 closeEventCount++;
+                options.log(`Incrementing close event count to ${closeEventCount}`);
                 if (closeEventCount === options.getFiles().length) {
+                    options.log('Cryptify complete, resolving promise');
                     resolve(closeEventCount);
                 }
             });
