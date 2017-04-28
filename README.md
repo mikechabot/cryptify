@@ -2,7 +2,8 @@
 File-based encryption (FBE) with Node.js
 
 - [Installation](#installation)
-- [Usage](#usage)
+- [CLI Usage](#cli-usage)
+- [Module Usage](#module-usage)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
@@ -11,9 +12,9 @@ File-based encryption (FBE) with Node.js
 ## <a name="cryptify#installation">Installation</a>
 - ```$ npm i -g cryptify@latest```
 
-## <a name="cryptify#usage">Usage</a>
+## <a name="cryptify#cli-usage">CLI Usage</a>
 
-    Cryptify v2.0.3 File-based Encryption Utility
+    Cryptify v2.0.4 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -50,6 +51,24 @@ File-based encryption (FBE) with Node.js
        3) Must contain at least 1 numeric character
        4) Must contain a combination of uppercase and lowercase
 
+
+## <a name="cryptify#module-usage">Module Usage</a>
+
+```javascript
+const cryptify = require('cryptify/lib/cryptify');
+
+// Encrypt the file
+cryptify(['./configuration.props', '-e', '-p', 'mySecretKey'])
+
+// Decrypt the file, and get contents
+cryptify(['./configuration.props', '-d', '-p', 'mySecretKey', '-r'])
+    .then(file => ({
+        // Do stuff
+    })
+    .catch(error => ({
+        console.log('Error decrypting file', error);
+    });
+```
 
 ## <a name="cryptify#recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.
