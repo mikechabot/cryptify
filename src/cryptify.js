@@ -122,10 +122,13 @@ CryptifyConfig.prototype.__init = function (configOptions) {
     this.cipher = ciphers[0] || DEFAULT_CIPHER;
     this.log(`Set cipher to '${this.getCipher()}'`);
 
-    const encoding = _parseOptions(configOptions, OPTION.RETURN_FILE, true);
-    _verifyOnlyOne(encoding, ENCODING, true);
-    this.encoding = encoding[0] || DEFAULT_ENCODING;
-    this.log(`Set encoding to '${this.getEncoding()}'`);
+    if (this.doReturnFiles()) {
+        this.log(`Return files? ${this.doReturnFiles()}`);
+        const encoding = _parseOptions(configOptions, OPTION.FILE_ENCODING, true);
+        _verifyOnlyOne(encoding, ENCODING, true);
+        this.encoding = encoding[0] || DEFAULT_ENCODING;
+        this.log(`Set encoding to '${this.getEncoding()}'`);
+    }
 
     configOptions.forEach((value, index) => {
         if (!OPTIONS.includes(value) &&
@@ -248,7 +251,8 @@ function _printHelpAndExit () {
     _println('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
     _println('       -k --keep                 Keep the original file(s)');
     _println('       -l --log                  Enable debug log');
-    _println('       -r --return <encoding>    Return file contents, decrypt only (Default: utf8)');
+    _println('       -r --return               Return decrypted file contents');
+    _println('       -n --encoding <encoding>  Return file encoding (Default: utf8)');
     _println('       -h --help                 Show this menu');
     _println('       -v --version              Show version');
     _println();

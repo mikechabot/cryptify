@@ -34,7 +34,8 @@ File-based encryption (FBE) with Node.js
        -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
        -k --keep                 Keep the original file(s)
        -l --log                  Enable debug log
-       -r --return <encoding>    Return file contents, decrypt only (Default: utf8)
+       -r --return               Return decrypted file contents
+       -n --encoding <encoding>  Return file encoding (Default: utf8)
        -h --help                 Show this menu
        -v --version              Show version
 

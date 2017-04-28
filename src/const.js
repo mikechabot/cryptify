@@ -18,15 +18,16 @@ export const EXTENSIONS = {
  * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], KEEP: [*], PASSWORD: [*], DEBUG: [*], HELP: [*], VERSION: [*]}}
  */
 export const OPTION = {
-    ENCRYPT    : ['-e', '--encrypt'],
-    DECRYPT    : ['-d', '--decrypt'],
-    CIPHER     : ['-c', '--cipher'],
-    KEEP       : ['-k', '--keep'],
-    PASSWORD   : ['-p', '--password'],
-    DEBUG      : ['-l', '--log'],
-    RETURN_FILE: ['-r', '--return'],
-    HELP       : ['-h', '--help'],
-    VERSION    : ['-v', '--version']
+    ENCRYPT      : ['-e', '--encrypt'],
+    DECRYPT      : ['-d', '--decrypt'],
+    CIPHER       : ['-c', '--cipher'],
+    KEEP         : ['-k', '--keep'],
+    PASSWORD     : ['-p', '--password'],
+    DEBUG        : ['-l', '--log'],
+    RETURN_FILE  : ['-r', '--return'],
+    FILE_ENCODING: ['-n', '--encoding'],
+    HELP         : ['-h', '--help'],
+    VERSION      : ['-v', '--version']
 };
 
 /**
@@ -37,7 +38,8 @@ export const OPTIONS_WITH_NO_ARGS = [
     ...OPTION.KEEP,
     ...OPTION.DEBUG,
     ...OPTION.HELP,
-    ...OPTION.VERSION
+    ...OPTION.VERSION,
+    ...OPTION.RETURN_FILE
 ];
 
 /**
@@ -47,7 +49,7 @@ export const OPTIONS_WITH_NO_ARGS = [
 export const OPTIONS_WITH_ARGS = [
     ...OPTION.PASSWORD,
     ...OPTION.CIPHER,
-    ...OPTION.RETURN_FILE
+    ...OPTION.FILE_ENCODING
 ];
 
 /**
