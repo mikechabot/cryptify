@@ -103,7 +103,7 @@ cryptify(['./configuration.props', '-e', '-p', 'mySecretKey'])
 
 // Decrypt the file, and get contents
 cryptify(['./configuration.props', '-d', '-p', 'mySecretKey', '-r'])
-    .then(file => ({
+    .then(files => ({
         // Do stuff
     })
     .catch(error => ({
