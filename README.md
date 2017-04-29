@@ -5,6 +5,7 @@ File-based encryption (FBE) with Node.js
 - [Usage](#usage)
   - [Options](#options)
   - [CLI](#cli)
+  - [Module](#module)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
