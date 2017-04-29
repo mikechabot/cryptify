@@ -56,41 +56,41 @@ Adheres to http://docopt.org/
 
  - CLI Help
 
-      Cryptify v2.1.0 File-based Encryption Utility
-      https://www.npmjs.com/package/cryptify
-      Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
+       Cryptify v2.1.0 File-based Encryption Utility
+       https://www.npmjs.com/package/cryptify
+       Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
-      Usage:
-         cryptify <file>... -p <password> (-e|-d) [options]
-         cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
-         cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log
-         cryptify --version
+       Usage:
+          cryptify <file>... -p <password> (-e|-d) [options]
+          cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
+          cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log
+          cryptify --version
 
-      Required Commands:
-         -e --encrypt               Encrypt the file(s)
-         -d --decrypt               Decrypt the file(s)
+       Required Commands:
+          -e --encrypt               Encrypt the file(s)
+          -d --decrypt               Decrypt the file(s)
 
-      Required Arguments:
-         -p --password              Cryptographic key
+       Required Arguments:
+          -p --password              Cryptographic key
 
-      Optional Arguments:
-         -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
-         -r --return               Return decrypted file(s) in Promise
-         -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
-         -l --log                  Enable debug log
-         -h --help                 Show this menu
-         -v --version              Show version
+        Optional Arguments:
+           -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
+           -r --return               Return decrypted file(s) in Promise
+           -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
+           -l --log                  Enable debug log
+           -h --help                 Show this menu
+           -v --version              Show version
 
-      Required Password Wrapping:
-         Bash                       single-quotes
-         Command Prompt             double-quotes
-         PowerShell                 single-quotes
+        Required Password Wrapping:
+           Bash                       single-quotes
+           Command Prompt             double-quotes
+           PowerShell                 single-quotes
 
-      Password Requirements:
-         1) Must contain at least 8 characters
-         2) Must contain at least 1 special character
-         3) Must contain at least 1 numeric character
-         4) Must contain a combination of uppercase and lowercase
+        Password Requirements:
+           1) Must contain at least 8 characters
+           2) Must contain at least 1 special character
+           3) Must contain at least 1 numeric character
+           4) Must contain a combination of uppercase and lowercase
 
 ### <a name="cryptify#module">Module</a>
 #### <a name="cryptify#commonjs">CommonJS</a>
