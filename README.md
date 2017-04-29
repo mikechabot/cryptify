@@ -2,60 +2,101 @@
 File-based encryption (FBE) with Node.js
 
 - [Installation](#installation)
-- [CLI Usage](#cli-usage)
-- [Module Usage](#module-usage)
+- [Usage](#usage)
+  - [Options](#options)
+  - [CLI](#cli)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
   - [Windows Powershell](#ps)
+- [Password Requirements](#password-req)
 
 ## <a name="cryptify#installation">Installation</a>
-- ```$ npm i -g cryptify@latest```
+Yarn or npm
+- ```$ npm i -g cryptify```
+- ```yarn global add cryptify```
 
-## <a name="cryptify#cli-usage">CLI Usage</a>
+## <a name="cryptify#usage">Usage</a>
 
-    Cryptify v2.0.4 File-based Encryption Utility
-    https://www.npmjs.com/package/cryptify
-    Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
+Adheres to http://docopt.org/
 
-    Usage:
-       cryptify (<file>... (-p '<password>') (command) [options] | [other])
-       cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
-       cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log
-       cryptify --version
+```$ cryptify <file>... (-e|-d) -p <password> [options]```
 
-    Required Commands:
-       -e --encrypt              Encrypt the file(s)
-       -d --decrypt              Decrypt the file(s)
+### <a name="cryptify#options">Options</a>
 
-    Required Arguments:
-       -p --password             Cryptographic key
+| Short | Long | Description | Default | Required |
+| ----- | ---- | ----------- | ------- | -------- |
+| -e | --encrypt | Encrypt file(s) | | Yes |
+| -d | --decrypt | decrypt file(s) | | Yes |
+| -p | --password | Cryptographic key | | Yes |
+| -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
+| -r | --return | Return decrypted file(s) contents | | No |
+| -n | --encoding | Character encoding of returned file(s) | utf8 | No |
+| -l | --log | Debug logging | | No |
+| -h | --help | Show help menu | | No |
+| -v | --version | Show version | | No |
 
-    Optional Arguments:
-       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
-       -k --keep                 Keep the original file(s)
-       -l --log                  Enable debug log
-       -r --return               Return decrypted file(s)
-       -n --encoding <encoding>  Encoding of returned file(s) (Default: utf8)
-       -h --help                 Show this menu
-       -v --version              Show version
+### <a name="cryptify#cli">CLI</a>
 
-    Required Password Wrapping:
-       Bash                      single-quotes
-       Command Prompt            double-quotes
-       PowerShell                single-quotes
+- Encrypt a file with a password:
 
-    Password Requirements:
-       1) Minimum length: 8 characters
-       2) Must contain at least 1 special character
-       3) Must contain at least 1 numeric character
-       4) Must contain a combination of uppercase and lowercase
+      $ cryptify ./configuration.props -e -p mySecretKey
 
+- Encrypt some files with debug logging:
 
-## <a name="cryptify#module-usage">Module Usage</a>
+      $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -l
 
+- Encrypt with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher):
+
+      $ cryptify ./config.json  -e -p mySecretKey -c aes-256-cbc
+
+- When decrypting, be sure to use the same cipher:
+
+      $ cryptify ./config.json -d -p mySecretKey -c aes-256-cbc
+
+ - CLI Help
+
+      Cryptify v2.1.0 File-based Encryption Utility
+      https://www.npmjs.com/package/cryptify
+      Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
+
+      Usage:
+         cryptify <file>... -p <password> (-e|-d) [options]
+         cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
+         cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log
+         cryptify --version
+
+      Required Commands:
+         -e --encrypt               Encrypt the file(s)
+         -d --decrypt               Decrypt the file(s)
+
+      Required Arguments:
+         -p --password              Cryptographic key
+
+      Optional Arguments:
+         -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
+         -r --return               Return decrypted file(s) in Promise
+         -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
+         -l --log                  Enable debug log
+         -h --help                 Show this menu
+         -v --version              Show version
+
+      Required Password Wrapping:
+         Bash                       single-quotes
+         Command Prompt             double-quotes
+         PowerShell                 single-quotes
+
+      Password Requirements:
+         1) Must contain at least 8 characters
+         2) Must contain at least 1 special character
+         3) Must contain at least 1 numeric character
+         4) Must contain a combination of uppercase and lowercase
+
+### <a name="cryptify#module">Module</a>
+#### <a name="cryptify#commonjs">CommonJS</a>
+Mimic CLI usage by passing in an argument list.
 ```javascript
-const cryptify = require('cryptify/lib/cryptify');
+const cryptify = require('cryptify/lib/cli');
 
 // Encrypt the file
 cryptify(['./configuration.props', '-e', '-p', 'mySecretKey'])
@@ -69,6 +110,14 @@ cryptify(['./configuration.props', '-d', '-p', 'mySecretKey', '-r'])
         console.log('Error decrypting file', error);
     });
 ```
+
+#### <a name="cryptify#es2015">ES2015</a>
+
+## <a name="cryptify#password-req">Password Requirements</a>
+1. Must contain at least 8 characters
+2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
+3. Must contain at least 1 numeric character
+4. Must contain a combination of uppercase and lowercase
 
 ## <a name="cryptify#recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.

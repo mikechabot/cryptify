@@ -1,27 +1,21 @@
-const packageDotJson = require('../package.json');
-
 /**
- * Cryptify constants
- * @author Mike Chabot
+ * Various cryptify constants
  */
+const packageDotJson = require('../../package.json');
 
 export const CRYPTIFY_VERSION = packageDotJson.version;
 export const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
 export const DEFAULT_ENCODING = 'utf8';
-export const EXTENSIONS = {
-    ENCRYPT: 'enc',
-    DECRYPT: 'dec'
-};
+export const EXTENSION = 'tmp';
 
 /**
  * Cryptify options
- * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], KEEP: [*], PASSWORD: [*], DEBUG: [*], HELP: [*], VERSION: [*]}}
+ * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], PASSWORD: [*], DEBUG: [*], HELP: [*], VERSION: [*]}}
  */
-export const OPTION = {
+export const OPTION_MAP = {
     ENCRYPT      : ['-e', '--encrypt'],
     DECRYPT      : ['-d', '--decrypt'],
     CIPHER       : ['-c', '--cipher'],
-    KEEP         : ['-k', '--keep'],
     PASSWORD     : ['-p', '--password'],
     DEBUG        : ['-l', '--log'],
     RETURN_FILE  : ['-r', '--return'],
@@ -35,11 +29,10 @@ export const OPTION = {
  * @type {[*]}
  */
 export const OPTIONS_WITH_NO_ARGS = [
-    ...OPTION.KEEP,
-    ...OPTION.DEBUG,
-    ...OPTION.HELP,
-    ...OPTION.VERSION,
-    ...OPTION.RETURN_FILE
+    ...OPTION_MAP.DEBUG,
+    ...OPTION_MAP.HELP,
+    ...OPTION_MAP.VERSION,
+    ...OPTION_MAP.RETURN_FILE
 ];
 
 /**
@@ -47,9 +40,9 @@ export const OPTIONS_WITH_NO_ARGS = [
  * @type {[*]}
  */
 export const OPTIONS_WITH_ARGS = [
-    ...OPTION.PASSWORD,
-    ...OPTION.CIPHER,
-    ...OPTION.FILE_ENCODING
+    ...OPTION_MAP.PASSWORD,
+    ...OPTION_MAP.CIPHER,
+    ...OPTION_MAP.FILE_ENCODING
 ];
 
 /**
@@ -57,14 +50,14 @@ export const OPTIONS_WITH_ARGS = [
  * @type {[*]}
  */
 export const REQUIRED_OPTIONS = [
-    ...OPTION.ENCRYPT,
-    ...OPTION.DECRYPT
+    ...OPTION_MAP.ENCRYPT,
+    ...OPTION_MAP.DECRYPT
 ];
 
 /**
  * Combined option arrays
  */
-export const OPTIONS = [
+export const OPTION_ARRAY = [
     ...REQUIRED_OPTIONS,
     ...OPTIONS_WITH_NO_ARGS,
     ...OPTIONS_WITH_ARGS
@@ -82,14 +75,25 @@ export const SPECIAL_CHARACTERS = [
     ']', '^', '_', '`', '{', '|', '}', '~'
 ];
 
+export const CLOSE_EVENT = 'close';
+export const COMMAND = 'command';
+export const PASSWORD = 'password';
+export const ENCODING = 'encoding';
+export const CIPHER = 'cipher';
+
 export default {
-    OPTION,
-    OPTIONS,
+    OPTION_MAP,
+    OPTION_ARRAY,
     REQUIRED_OPTIONS,
     OPTIONS_WITH_NO_ARGS,
     OPTIONS_WITH_ARGS,
     SPECIAL_CHARACTERS,
     CRYPTIFY_VERSION,
     DEFAULT_CIPHER,
-    EXTENSIONS
+    EXTENSION,
+    CLOSE_EVENT,
+    COMMAND,
+    PASSWORD,
+    ENCODING,
+    CIPHER
 };
