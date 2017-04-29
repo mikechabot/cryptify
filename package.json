@@ -1,6 +1,6 @@
 {
   "name": "cryptify",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "File-based encryption utility for Node.js",
   "main": "./index.js",
   "bin": "./index.js",
