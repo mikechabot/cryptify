@@ -33,7 +33,6 @@ Adheres to http://docopt.org/
 | -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
 | -r | --return | Return decrypted file(s) contents | | No |
 | -n | --encoding | Character encoding of returned file(s) | utf8 | No |
-| -l | --log | Debug logging | | No |
 | -h | --help | Show help menu | | No |
 | -v | --version | Show version | | No |
 
@@ -43,17 +42,13 @@ Adheres to http://docopt.org/
 
       $ cryptify ./configuration.props -e -p mySecretKey
 
-- Encrypt some files with debug logging:
+- Encrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher):
 
-      $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -l
-
-- Encrypt with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher):
-
-      $ cryptify ./config.json  -e -p mySecretKey -c aes-256-cbc
+      $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -c aes-256-cbc
 
 - When decrypting, be sure to use the same cipher:
 
-      $ cryptify ./config.json -d -p mySecretKey -c aes-256-cbc
+      $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
 
  - CLI Help
 
@@ -78,7 +73,6 @@ Adheres to http://docopt.org/
            -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
            -r --return               Return decrypted file(s) in Promise
            -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
-           -l --log                  Enable debug log
            -h --help                 Show this menu
            -v --version              Show version
 
@@ -95,24 +89,47 @@ Adheres to http://docopt.org/
 
 ### <a name="cryptify#module">Module</a>
 #### <a name="cryptify#commonjs">CommonJS</a>
-Mimic CLI usage by passing in an argument list.
+
+```const Cryptify = require('cryptify/lib/cryptify'```;
+
+#### <a name="cryptify#es2015">ES2015</a>
+
+```import Cryptify from 'cryptify/lib/cryptify'```;
+
+Constructor
+```new Cryptify(fileOrFiles, password, returnFiles, cipher, encoding)```
+
+Encrypt / Decrypt
 ```javascript
-const cryptify = require('cryptify/lib/cli');
-
-// Encrypt the file
-cryptify(['./configuration.props', '-e', '-p', 'mySecretKey'])
-
-// Decrypt the file, and get contents
-cryptify(['./configuration.props', '-d', '-p', 'mySecretKey', '-r'])
-    .then(files => ({
-        // Do stuff
-    })
-    .catch(error => ({
-        console.log('Error decrypting file', error);
+const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+instance
+    .encrypt()
+    .then((files) => {
+        // do stuff
+        instance
+            .decrypt()
+            .then(() => {
+                // do stuff
+            });
     });
 ```
 
-#### <a name="cryptify#es2015">ES2015</a>
+Decrypt / Encrypt
+```javascript
+const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+instance
+    .decrypt()
+    .then((files) => {
+        // do stuff
+        instance
+            .encrypt()
+            .then(() => {
+                // do stuff
+            });
+    });
+```
+
+
 
 ## <a name="cryptify#password-req">Password Requirements</a>
 1. Must contain at least 8 characters

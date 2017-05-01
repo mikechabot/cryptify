@@ -1,12 +1,14 @@
 {
   "name": "cryptify",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "File-based encryption utility for Node.js",
   "main": "./index.js",
   "bin": "./index.js",
   "scripts": {
     "start": "node index",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib",
+    "build:example": "babel example.js --out-file example-compiled.js",
+    "start:example": "cross-env ENV_SECRET_KEY=mySecretKey123! node example-compiled.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-preset-es2015": "^6.24.0",
+    "cross-env": "^4.0.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^7.1.0",
     "eslint-plugin-promise": "^3.5.0",
