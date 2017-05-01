@@ -3,8 +3,9 @@ File-based encryption (FBE) with Node.js
 
 - [Installation](#installation)
 - [CLI](#cli)
-  - [Options](#options)
 - [Module](#module)
+  - [CommonJS](#commonjs)
+  - [ES2015](#es2015)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
@@ -24,7 +25,7 @@ Adheres to http://docopt.org/
 
 ```$ cryptify <file>... (-e|-d) -p <password> [options]```
 
-### <a name="cryptify#options">Options</a>
+### Options
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
@@ -86,16 +87,16 @@ Adheres to http://docopt.org/
            3) Must contain at least 1 numeric character
            4) Must contain a combination of uppercase and lowercase
 
-### <a name="cryptify#module">Module</a>
-#### <a name="cryptify#commonjs">CommonJS</a>
+## <a name="cryptify#module">Module</a>
+### <a name="cryptify#commonjs">CommonJS</a>
 
-```const Cryptify = require('cryptify/lib/cryptify')```;
+```const Cryptify = require('cryptify/lib/cryptify');```
 
-#### <a name="cryptify#es2015">ES2015</a>
+### <a name="cryptify#es2015">ES2015</a>
 
 ```import Cryptify from 'cryptify/lib/cryptify';```
 
-**Constructor**
+#### Constructor
 
 ```new Cryptify(files, password, cipher, encoding)```
 
