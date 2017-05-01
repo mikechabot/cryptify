@@ -2,10 +2,9 @@
 File-based encryption (FBE) with Node.js
 
 - [Installation](#installation)
-- [Usage](#usage)
+- [CLI](#cli)
   - [Options](#options)
-  - [CLI](#cli)
-  - [Module](#module)
+- [Module](#module)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
@@ -17,7 +16,9 @@ Yarn or npm
 - ```$ npm i -g cryptify```
 - ```yarn global add cryptify```
 
-## <a name="cryptify#usage">Usage</a>
+## <a name="cryptify#cli">CLI</a>
+
+### <a name="cryptify#usage">Usage</a>
 
 Adheres to http://docopt.org/
 
@@ -31,12 +32,9 @@ Adheres to http://docopt.org/
 | -d | --decrypt | decrypt file(s) | | Yes |
 | -p | --password | Cryptographic key | | Yes |
 | -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
-| -r | --return | Return decrypted file(s) contents | | No |
 | -n | --encoding | Character encoding of returned file(s) | utf8 | No |
 | -h | --help | Show help menu | | No |
 | -v | --version | Show version | | No |
-
-### <a name="cryptify#cli">CLI</a>
 
 - Encrypt a file with a password:
 
@@ -50,9 +48,11 @@ Adheres to http://docopt.org/
 
       $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
 
- - CLI Help
+ - Show help
+ 
+       $ cryptify --help
 
-       Cryptify v2.1.2 File-based Encryption Utility
+       Cryptify v2.2.0 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -71,7 +71,6 @@ Adheres to http://docopt.org/
 
         Optional Arguments:
            -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
-           -r --return               Return decrypted file(s) in Promise
            -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
            -h --help                 Show this menu
            -v --version              Show version
@@ -90,46 +89,49 @@ Adheres to http://docopt.org/
 ### <a name="cryptify#module">Module</a>
 #### <a name="cryptify#commonjs">CommonJS</a>
 
-```const Cryptify = require('cryptify/lib/cryptify'```;
+```const Cryptify = require('cryptify/lib/cryptify')```;
 
 #### <a name="cryptify#es2015">ES2015</a>
 
-```import Cryptify from 'cryptify/lib/cryptify'```;
+```import Cryptify from 'cryptify/lib/cryptify';```
 
-Constructor
-```new Cryptify(fileOrFiles, password, returnFiles, cipher, encoding)```
+**Constructor**
+
+```new Cryptify(files, password, cipher, encoding)```
 
 Encrypt / Decrypt
+
 ```javascript
 const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+
 instance
     .encrypt()
     .then((files) => {
         // do stuff
         instance
             .decrypt()
-            .then(() => {
+            .then((files) => {
                 // do stuff
             });
     });
 ```
 
 Decrypt / Encrypt
+
 ```javascript
 const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+
 instance
     .decrypt()
     .then((files) => {
         // do stuff
         instance
             .encrypt()
-            .then(() => {
+            .then((files) => {
                 // do stuff
             });
     });
 ```
-
-
 
 ## <a name="cryptify#password-req">Password Requirements</a>
 1. Must contain at least 8 characters
@@ -150,9 +152,11 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         667 cryptify ./myfile.txt -e -p mySecretKey
         $ history -d 667
         $ history -w
+        
 2. **Blunt Approach:** Clear the entire current session history (in memory)
 
         $ history -c
+        
 3. **Nuclear Approach:** Clear current and existing session history (in memory, and on disk)
 
         $ rm $HISTFILE
@@ -161,6 +165,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         (open shell)
         $ cat $HISTFILE
         exit
+        
 ### <a name="cryptify#cmd">Windows Command Prompt</a>
 Windows does not store history between command prompt sessions.
 1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
