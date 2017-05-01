@@ -120,7 +120,7 @@ instance
 Decrypt / Encrypt
 
 ```javascript
-const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+const instance = new Cryptify(['./foo.json', './bar.json'], process.env.ENV_SECRET_KEY);
 
 instance
     .decrypt()
