@@ -13,7 +13,40 @@
  * GNU General Public License for more details.
  */
 
-import { SPECIAL_CHARACTERS } from './const';
+import fs from 'fs';
+import crypto from 'crypto';
+import CryptifyException from './exception';
+import { SPECIAL_CHARACTERS, OPTION_ARRAY, OPTIONS_WITH_ARGS } from './const';
+
+export function parseOptionsFromArguments (lookIn, lookFor, getArgument) {
+    if (!lookIn || !lookFor) return [];
+    return lookIn
+        .map((value, index) => {
+            return lookFor.includes(value)
+                ? getArgument ? lookIn[index + 1] : value
+                : null;
+        })
+        .filter(value => value);
+}
+
+export function parseOptionFromArguments (lookIn, lookFor, getArgument) {
+    if (!lookIn || lookFor) return;
+    return parseOptionsFromArguments(lookIn, lookFor, getArgument)[0];
+}
+
+export function parseFilesFromArguments (args) {
+    const files = [];
+    args.forEach((value, index) => {
+        if (!OPTION_ARRAY.includes(value) && !OPTIONS_WITH_ARGS.includes(args[index - 1])) {
+            if (!fs.existsSync(value)) {
+                throw new CryptifyException(`No such file: "${value}"`);
+            } else if (!files.includes(value)) {
+                files.push(value);
+            }
+        }
+    });
+    return files;
+}
 
 /**
  * Look in an array for an array of values
@@ -22,7 +55,7 @@ import { SPECIAL_CHARACTERS } from './const';
  * @returns {boolean}
  * @private
  */
-export function _contains (lookIn, lookFor) {
+export function deepFind (lookIn, lookFor) {
     if (!lookIn || !lookFor) return false;
     return lookFor.some(entry => {
         return lookIn.includes(entry);
@@ -36,7 +69,7 @@ export function _contains (lookIn, lookFor) {
  * @returns {string}
  * @private
  */
-export function _getSafePassword (password) {
+export function getSafePassword (password) {
     let safePassword = [];
     const length = password.length;
     for (let i = 0; i < length - 2; i++) {
@@ -47,7 +80,7 @@ export function _getSafePassword (password) {
     return safePassword.join('');
 }
 
-export function _isValidPassword (password) {
+export function isValidPassword (password) {
     function _hasUpperCase (str) {
         if (!str) return false;
         return str.trim().toLowerCase() !== str;
@@ -64,8 +97,13 @@ export function _isValidPassword (password) {
         password !== undefined &&
         typeof password === 'string' &&
         password.trim().length >= 8 &&
-        _contains(password.trim().split(''), SPECIAL_CHARACTERS) &&
+        deepFind(password.trim().split(''), SPECIAL_CHARACTERS) &&
         _hasNumber(password) &&
         _hasUpperCase(password) &&
         _hasLowerCase(password);
+}
+
+export function isValidCipher (cipher) {
+    if (!cipher) return false;
+    return crypto.getCiphers().includes(cipher);
 }
