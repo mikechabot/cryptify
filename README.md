@@ -53,7 +53,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.0 File-based Encryption Utility
+       Cryptify v2.2.1 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -105,16 +105,21 @@ Encrypt / Decrypt
 ```javascript
 const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
 
-instance
-    .encrypt()
-    .then((files) => {
-        // do stuff
-        instance
-            .decrypt()
-            .then((files) => {
-                // do stuff
-            });
-    });
+try {
+    const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+    instance
+        .encrypt()
+        .then((files) => {
+            // do stuff
+            instance
+                .decrypt()
+                .then((files) => {
+                    // do stuff
+                });
+        });
+} catch (error) {
+    console.error(error.message);
+}
 ```
 
 Decrypt / Encrypt
@@ -122,16 +127,21 @@ Decrypt / Encrypt
 ```javascript
 const instance = new Cryptify(['./foo.json', './bar.json'], process.env.ENV_SECRET_KEY);
 
-instance
-    .decrypt()
-    .then((files) => {
-        // do stuff
-        instance
-            .encrypt()
-            .then((files) => {
-                // do stuff
-            });
-    });
+try {
+    const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+    instance
+        .decrypt()
+        .then((files) => {
+            // do stuff
+            instance
+                .encrypt()
+                .then((files) => {
+                    // do stuff
+                });
+        });
+} catch (error) {
+    console.error(error.message);
+}
 ```
 
 ## <a name="cryptify#password-req">Password Requirements</a>

@@ -19,108 +19,126 @@ import crypto from 'crypto';
 import { printHelp, printVersion } from './print';
 import CryptifyException from './common/exception';
 import {
-    deepFind, getSafePassword, isValidPassword,
-    parseOptionsFromArguments, parseOptionFromArguments, parseFilesFromArguments
+    someInclude, getSafePassword, isValidPassword,
+    parseOptionsFromArguments, parseOptionFromArguments, parseFilesFromArguments,
+    isValidCipher
 } from './common/util';
 import {
-    OPTION_MAP, OPTION_ARRAY, REQUIRED_OPTIONS,
-    OPTIONS_WITH_ARGS, OPTIONS_WITH_NO_ARGS, EXTENSION,
-    DEFAULT_CIPHER, DEFAULT_ENCODING, DEFAULT_COMMAND,
-    CRYPTIFY_VERSION, COMMAND, CLOSE_EVENT,
-    PASSWORD, ENCODING, CIPHER
+    OPTION_MAP, REQUIRED_OPTIONS, OPTIONS_WITH_NO_ARGS,
+    EXTENSION, DEFAULT_CIPHER, DEFAULT_ENCODING
 } from './common/const';
 
 function Cryptify (files, password, cipher, encoding) {
-    this.command = undefined;           // Encrypt or decrypt
-    this.password = password;          // Crypto key
-    this.cipher = cipher;            // Cipher algorithm
-    this.encoding = encoding;          // Return file encoding
-    this.files = files;                    // List of files to be encrypted or decrypted
-    this.version = CRYPTIFY_VERSION;    // Version info
+    this.password = password;                               // Crypto key
+    this.cipher = cipher || DEFAULT_CIPHER;                 // Cipher algorithm
+    this.encoding = encoding || DEFAULT_ENCODING;           // Return file encoding
+    this.files = !Array.isArray(files) ? [files] : files;   // List of files to be encrypted or decrypted
 
-    this.options = {};                  // Optional arguments
+    this.__validateFiles(this.getFiles());
+    this.__validatePassword(this.getPassword());
+    this.__validateCipher(this.getCipher());
+}
 
+Cryptify.__initFromCLI = function (args) {
+    let instance;
     try {
-        this.__validateFiles(files);
+        if (!args || !args.length) {
+            printHelp();
+            return;
+        }
+
+        const optionsWithNoArgs = parseOptionsFromArguments(args, OPTIONS_WITH_NO_ARGS);
+        const command = parseOptionFromArguments(args, REQUIRED_OPTIONS, false);
+        const password = parseOptionFromArguments(args, OPTION_MAP.PASSWORD, true);
+        const cipher = parseOptionFromArguments(args, OPTION_MAP.CIPHER, true);
+        const encoding = parseOptionFromArguments(args, OPTION_MAP.FILE_ENCODING, true);
+
+        if (someInclude(optionsWithNoArgs, OPTION_MAP.VERSION)) {
+            printVersion();
+            return;
+        }
+
+        if (someInclude(optionsWithNoArgs, OPTION_MAP.HELP)) {
+            printHelp();
+            return;
+        }
+
+        if (!command || !password) {
+            throw new CryptifyException('Invalid usage, see --help');
+        }
+
+        const files = parseFilesFromArguments(args);
+        if (files.length < 1) {
+            throw new CryptifyException('Must specify a file or files, see --help');
+        }
+
+        instance = new Cryptify(files, password, cipher, encoding);
+        instance.setCommand(command);
     } catch (error) {
-        this.__error(error.message);
+        console.log(''); // Blank line for spacing
+        console.log(`   \u2718 ${error.message}`);
     }
 
-    // if (files) {
-    //     this.__initFromModule(files, password, cipher, encoding);
-    // }
-}
+    return instance;
+};
 
 Cryptify.prototype.__validateFiles = function (files) {
     if (!files ||
         (typeof files !== 'string' &&
-        (Array.isArray(files) && !files.every(file => typeof file === 'string')))
-    ) {
-        throw new CryptifyException('"files" must be a string or an array of strings');
+        (Array.isArray(files) && !files.every(file => typeof file === 'string')))) {
+        throw new CryptifyException('Must specify path(s) to file(s), see --help');
     }
-};
-
-Cryptify.prototype.__initFromModule = function (files, password, cipher, encoding) {
-    this.files = files;
-    this.command = DEFAULT_COMMAND;
-    this.password = password;
-    this.files = !Array.isArray(files) ? [files] : files;
-    this.cipher = cipher || DEFAULT_CIPHER;
-    this.encoding = encoding || DEFAULT_ENCODING;
-};
-
-Cryptify.__initFromCLI = function (args) {
-    let configuration;
-    try {
-        if (!args || !args.length) {
-            throw new CryptifyException('Expected array of arguments');
+    files.forEach(file => {
+        if (!fs.existsSync(file)) {
+            throw new CryptifyException(`No such file: ${file}`);
         }
-        const optionsWithNoArgs = parseOptionsFromArguments(args, OPTIONS_WITH_NO_ARGS);
-        configuration = {
-            files      : parseFilesFromArguments(args),
-            command    : parseOptionFromArguments(args, REQUIRED_OPTIONS, false),
-            password   : parseOptionFromArguments(args, OPTION_MAP.PASSWORD, true),
-            cipher     : parseOptionFromArguments(args, OPTION_MAP.CIPHER, true),
-            encoding   : parseOptionFromArguments(args, OPTION_MAP.FILE_ENCODING, true),
-            showVersion: deepFind(optionsWithNoArgs, OPTION_MAP.VERSION),
-            showHelp   : deepFind(optionsWithNoArgs, OPTION_MAP.HELP)
+    });
+};
 
-        };
-    } catch (error) {
-        console.log('');    // Blank line for spacing
-        console.log(`   \u2718 ${error.message}`);
-        return;
+Cryptify.prototype.__validatePassword = function (password) {
+    if (!password ||
+        typeof password !== 'string' ||
+        !isValidPassword(password)
+    ) {
+        throw new CryptifyException('Invalid password, see --help');
     }
+};
 
-    return new Cryptify(
-        configuration.files,
-        configuration.password,
-        configuration.cipher,
-        configuration.encoding,
-        configuration.showVersion,
-        configuration.showHelp,
-    );
+Cryptify.prototype.__validateCipher = function (cipher) {
+    if (!cipher ||
+        typeof cipher !== 'string' ||
+        !isValidCipher(cipher)
+    ) {
+        throw new CryptifyException(`Invalid cipher: ${cipher}, see --help`);
+    }
 };
 
 Cryptify.prototype.encrypt = function () {
-    this.command = OPTION_MAP.ENCRYPT[0];
+    this.setCommand(OPTION_MAP.ENCRYPT[0]);
     return this.__cryptify();
 };
 
 Cryptify.prototype.decrypt = function () {
-    this.command = OPTION_MAP.DECRYPT[0];
-    return this.__cryptify();
-};
-
-Cryptify.prototype.cryptifyFromCLI = function () {
+    this.setCommand(OPTION_MAP.DECRYPT[0]);
     return this.__cryptify();
 };
 
 Cryptify.prototype.__cryptify = function () {
-    return new Promise((resolve) => {
+    function __handleError (reject, isCipher, error) {
+        return !isCipher
+            ? reject(new CryptifyException(error.message))
+            : error.message.indexOf('wrong final block length') !== -1
+                ? reject(new CryptifyException(`Potential cipher mismatch: ${error.message}`))
+                : reject(new CryptifyException(error.message));
+    }
+
+    return new Promise((resolve, reject) => {
         let closeEventCount = 0;
 
-        this.__info(`Found ${this.getFiles().length} file(s)`);
+        this.__log(''); // Blank line for spacing
+        this.__info(`${this.doEncrypt() ? 'Encrypting' : 'Decrypting'} ${this.getFiles().length} file(s) with ${getSafePassword(this.getPassword())}`);
+        this.__info(`Using ${this.getCipher()} cipher `);
+        this.__info(`Using ${this.getEncoding()} encoding`);
 
         this.getFiles().forEach(file => {
             const inputPath = path.join(file);
@@ -132,21 +150,25 @@ Cryptify.prototype.__cryptify = function () {
             const is = fs.createReadStream(inputPath);
             const os = fs.createWriteStream(outputPath);
 
-            is.pipe(cipher).pipe(os);
-
-            os.on(CLOSE_EVENT, () => {
-                closeEventCount++;
-                fs.renameSync(outputPath, inputPath);
-                if (closeEventCount === this.getFiles().length) {
-                    this.__info('Processing complete');
-                    resolve(
-                        this.getFiles()
-                        .map(file =>
-                            fs.readFileSync(file, this.getEncoding())
-                        )
-                    );
-                }
-            });
+            is
+                .on('error', __handleError.bind(null, reject))
+                .pipe(cipher)
+                .on('error', __handleError.bind(null, reject, true))
+                .pipe(os)
+                .on('error', __handleError.bind(null, reject))
+                .on('close', () => {
+                    closeEventCount++;
+                    fs.renameSync(outputPath, inputPath);
+                    if (closeEventCount === this.getFiles().length) {
+                        this.__info('Processing complete');
+                        resolve(
+                            this.getFiles()
+                                .map(file =>
+                                    fs.readFileSync(file, this.getEncoding())
+                                )
+                        );
+                    }
+                });
         });
     });
 };
@@ -155,12 +177,12 @@ Cryptify.prototype.getFiles = function () {
     return this.files;
 };
 
-Cryptify.prototype.hasFiles = function () {
-    return this.files.length > 0;
-};
-
 Cryptify.prototype.getPassword = function () {
     return this.password;
+};
+
+Cryptify.prototype.setCommand = function (command) {
+    this.command = command;
 };
 
 Cryptify.prototype.getCommand = function () {
@@ -175,42 +197,12 @@ Cryptify.prototype.getEncoding = function () {
     return this.encoding;
 };
 
-Cryptify.prototype.getOptions = function () {
-    return this.options;
-};
-
-Cryptify.prototype.getVersion = function () {
-    return this.version;
-};
-
-Cryptify.prototype.showHelp = function () {
-    return deepFind(this.getOptions(), OPTION_MAP.HELP);
-};
-
-Cryptify.prototype.showVersion = function () {
-    return deepFind(this.getOptions(), OPTION_MAP.VERSION);
-};
-
 Cryptify.prototype.doEncrypt = function () {
     return OPTION_MAP.ENCRYPT.includes(this.getCommand());
 };
 
 Cryptify.prototype.getCipherFunction = function () {
     return this.doEncrypt() ? crypto.createCipher : crypto.createDecipher;
-};
-
-Cryptify.prototype.isValidPassword = function () {
-    return isValidPassword(
-        this.getPassword()
-    );
-};
-
-Cryptify.prototype.printHelp = function () {
-    printHelp(this);
-};
-
-Cryptify.prototype.printVersion = function () {
-    printVersion(this);
 };
 
 Cryptify.prototype.__info = function (message) {

@@ -13,9 +13,7 @@
  * GNU General Public License for more details.
  */
 
-import fs from 'fs';
 import crypto from 'crypto';
-import CryptifyException from './exception';
 import { SPECIAL_CHARACTERS, OPTION_ARRAY, OPTIONS_WITH_ARGS } from './const';
 
 export function parseOptionsFromArguments (lookIn, lookFor, getArgument) {
@@ -30,19 +28,17 @@ export function parseOptionsFromArguments (lookIn, lookFor, getArgument) {
 }
 
 export function parseOptionFromArguments (lookIn, lookFor, getArgument) {
-    if (!lookIn || lookFor) return;
+    if (!lookIn || !lookFor) return;
     return parseOptionsFromArguments(lookIn, lookFor, getArgument)[0];
 }
 
 export function parseFilesFromArguments (args) {
     const files = [];
     args.forEach((value, index) => {
-        if (!OPTION_ARRAY.includes(value) && !OPTIONS_WITH_ARGS.includes(args[index - 1])) {
-            if (!fs.existsSync(value)) {
-                throw new CryptifyException(`No such file: "${value}"`);
-            } else if (!files.includes(value)) {
-                files.push(value);
-            }
+        if (!OPTION_ARRAY.includes(value) &&
+            !OPTIONS_WITH_ARGS.includes(args[index - 1]) &&
+            !files.includes(value)) {
+            files.push(value);
         }
     });
     return files;
@@ -55,7 +51,7 @@ export function parseFilesFromArguments (args) {
  * @returns {boolean}
  * @private
  */
-export function deepFind (lookIn, lookFor) {
+export function someInclude (lookIn, lookFor) {
     if (!lookIn || !lookFor) return false;
     return lookFor.some(entry => {
         return lookIn.includes(entry);
@@ -97,7 +93,7 @@ export function isValidPassword (password) {
         password !== undefined &&
         typeof password === 'string' &&
         password.trim().length >= 8 &&
-        deepFind(password.trim().split(''), SPECIAL_CHARACTERS) &&
+        someInclude(password.trim().split(''), SPECIAL_CHARACTERS) &&
         _hasNumber(password) &&
         _hasUpperCase(password) &&
         _hasLowerCase(password);

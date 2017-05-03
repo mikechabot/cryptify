@@ -17,8 +17,20 @@ import Cryptify from './cryptify';
 import { printPasswordWarning } from './print';
 
 module.exports = function CryptifyCLI (configArguments) {
-    const instance = Cryptify.__initFromCLI();
-    if (instance) {
-        console.log('got me an instance');
+    try {
+        const instance = Cryptify.__initFromCLI(configArguments);
+        if (instance) {
+            instance
+                .__cryptify()
+                .then(() => {
+                    printPasswordWarning();
+                })
+                .catch((error) => {
+                    console.error(`   \u2718 ${error.message}`);
+                    printPasswordWarning();
+                });
+        }
+    } catch (error) {
+        console.error(error);
     }
 };
