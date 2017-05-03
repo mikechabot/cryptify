@@ -53,7 +53,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.1 File-based Encryption Utility
+       Cryptify v2.2.2 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -103,8 +103,6 @@ Adheres to http://docopt.org/
 Encrypt / Decrypt
 
 ```javascript
-const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
-
 try {
     const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
     instance
@@ -125,8 +123,6 @@ try {
 Decrypt / Encrypt
 
 ```javascript
-const instance = new Cryptify(['./foo.json', './bar.json'], process.env.ENV_SECRET_KEY);
-
 try {
     const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
     instance
