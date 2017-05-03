@@ -53,7 +53,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.2 File-based Encryption Utility
+       Cryptify v2.2.3 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -90,7 +90,7 @@ Adheres to http://docopt.org/
 ## <a name="cryptify#module">Module</a>
 ### <a name="cryptify#commonjs">CommonJS</a>
 
-```const Cryptify = require('cryptify/lib/cryptify');```
+```const Cryptify = require('cryptify/lib/cryptify').default;```
 
 ### <a name="cryptify#es2015">ES2015</a>
 
