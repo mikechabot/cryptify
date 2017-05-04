@@ -1,3 +1,7 @@
+[![npm version](https://badge.fury.io/js/cryptify.svg)](https://badge.fury.io/js/cryptify)
+[![Dependency Status](https://david-dm.org/mikechabot/cryptify.svg)](https://david-dm.org/mikechabot/cryptify)
+[![Dev Dependency Status](https://david-dm.org/mikechabot/cryptify/dev-status.svg)](https://david-dm.org/mikechabot/cryptify?type=dev)
+
 # cryptify
 File-based encryption (FBE) with Node.js
 
