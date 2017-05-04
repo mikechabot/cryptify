@@ -1,9 +1,10 @@
 # cryptify
 File-based encryption (FBE) with Node.js
 
-- [Installation](#installation)
 - [CLI](#cli)
+  - [Installation](#cli-installation)
 - [Module](#module)
+  - [Installation](#module-installation)
   - [CommonJS](#commonjs)
   - [ES2015](#es2015)
 - [Recommendations](#recommendations)
@@ -12,12 +13,12 @@ File-based encryption (FBE) with Node.js
   - [Windows Powershell](#ps)
 - [Password Requirements](#password-req)
 
-## <a name="cryptify#installation">Installation</a>
-Yarn or npm
-- ```$ npm i -g cryptify```
-- ```yarn global add cryptify```
-
 ## <a name="cryptify#cli">CLI</a>
+
+### <a name="cryptify#cli-installation">Installation</a>
+Yarn or npm
+- ```yarn global add cryptify```
+- ```$ npm i -g cryptify```
 
 ### <a name="cryptify#usage">Usage</a>
 
@@ -54,7 +55,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.5 File-based Encryption Utility
+       Cryptify v2.2.6 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -90,6 +91,12 @@ Adheres to http://docopt.org/
            4) Must contain a combination of uppercase and lowercase
 
 ## <a name="cryptify#module">Module</a>
+
+### <a name="cryptify#module-installation">Installation</a>
+Yarn or npm
+- ```yarn add cryptify```
+- ```$ npm i -S cryptify```
+
 ### <a name="cryptify#commonjs">CommonJS</a>
 
 ```const Cryptify = require('cryptify/lib/cryptify').default;```
