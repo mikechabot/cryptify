@@ -34,6 +34,7 @@ Adheres to http://docopt.org/
 | -p | --password | Cryptographic key | | Yes |
 | -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
 | -n | --encoding | Character encoding of returned file(s) | utf8 | No |
+| -l | --list | List available cipher algorithms |  | No |
 | -h | --help | Show help menu | | No |
 | -v | --version | Show version | | No |
 
@@ -60,7 +61,7 @@ Adheres to http://docopt.org/
        Usage:
           cryptify <file>... -p <password> (-e|-d) [options]
           cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
-          cryptify ./foo.json ./bar.json -p mySecretKey --decrypt --log
+          cryptify ./foo.json ./bar.json -p mySecretKey --decrypt
           cryptify --version
 
        Required Commands:
