@@ -1,4 +1,12 @@
+
+import crypto from 'crypto';
+import CryptifyException from '../common/exception';
 import { CRYPTIFY_VERSION } from '../common/const';
+
+export function printCiphers () {
+    if (!crypto) throw new CryptifyException('crypto not found');
+    console.log(crypto.getCiphers());
+}
 
 export function printVersion () {
     console.log(CRYPTIFY_VERSION);
@@ -37,7 +45,7 @@ export function printHelp () {
     console.log('       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)');
     console.log('       -r --return               Return decrypted file(s) in Promise');
     console.log('       -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)');
-    console.log('       -l --log                  Enable debug log');
+    console.log('       -l --list                 List available ciphers');
     console.log('       -h --help                 Show this menu');
     console.log('       -v --version              Show version');
     console.log('');

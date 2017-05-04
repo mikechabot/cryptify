@@ -53,7 +53,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.3 File-based Encryption Utility
+       Cryptify v2.2.4 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -73,6 +73,7 @@ Adheres to http://docopt.org/
         Optional Arguments:
            -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
            -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
+           -l --list                 List available ciphers
            -h --help                 Show this menu
            -v --version              Show version
 
@@ -124,7 +125,7 @@ Decrypt / Encrypt
 
 ```javascript
 try {
-    const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+    const instance = new Cryptify(['./foo.props', './bar.json'], process.env.ENV_SECRET_KEY);
     instance
         .decrypt()
         .then((files) => {

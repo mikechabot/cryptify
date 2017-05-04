@@ -26,7 +26,7 @@ module.exports = function CryptifyCLI (configArguments) {
                     printPasswordWarning();
                 })
                 .catch((error) => {
-                    console.error(`   \u2718 ${error.message}`);
+                    console.error(`   \u2718 ${(error && error.message) || 'An error has occurred'}`);
                     printPasswordWarning();
                 });
         }

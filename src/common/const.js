@@ -17,15 +17,15 @@ const packageDotJson = require('../../package.json');
 
 /**
  * Cryptify options
- * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], PASSWORD: [*], HELP: [*], VERSION: [*]}}
+ * @type {{ENCRYPT: [*], DECRYPT: [*], CIPHER: [*], PASSWORD: [*], FILE_ENCODING: [*], LIST_CIPHERS: [*], HELP: [*], VERSION: [*]}}
  */
 export const OPTION_MAP = {
     ENCRYPT      : ['-e', '--encrypt'],
     DECRYPT      : ['-d', '--decrypt'],
     CIPHER       : ['-c', '--cipher'],
     PASSWORD     : ['-p', '--password'],
-    RETURN_FILE  : ['-r', '--return'],
     FILE_ENCODING: ['-n', '--encoding'],
+    LIST_CIPHERS : ['-l', '--list'],
     HELP         : ['-h', '--help'],
     VERSION      : ['-v', '--version']
 };
@@ -37,7 +37,7 @@ export const OPTION_MAP = {
 export const OPTIONS_WITH_NO_ARGS = [
     ...OPTION_MAP.HELP,
     ...OPTION_MAP.VERSION,
-    ...OPTION_MAP.RETURN_FILE
+    ...OPTION_MAP.LIST_CIPHERS
 ];
 
 /**
@@ -81,16 +81,13 @@ export const SPECIAL_CHARACTERS = [
 ];
 
 export const CRYPTIFY_VERSION = packageDotJson.version;
-export const DEFAULT_COMMAND = OPTION_MAP.ENCRYPT[0];
-export const DEFAULT_CIPHER = 'aes-256-cbc-hmac-sha256';
-export const DEFAULT_ENCODING = 'utf8';
-export const EXTENSION = 'tmp';
 
-export const CLOSE_EVENT = 'close';
-export const COMMAND = 'command';
-export const PASSWORD = 'password';
-export const ENCODING = 'encoding';
-export const CIPHER = 'cipher';
+export const DEFAULTS = {
+    COMMAND  : OPTION_MAP.ENCRYPT[0],
+    CIPHER   : 'aes-256-cbc-hmac-sha256',
+    ENCODING : 'utf8',
+    EXTENSION: 'tmp'
+};
 
 export default {
     OPTION_MAP,
@@ -100,13 +97,5 @@ export default {
     OPTIONS_WITH_ARGS,
     SPECIAL_CHARACTERS,
     CRYPTIFY_VERSION,
-    DEFAULT_COMMAND,
-    DEFAULT_ENCODING,
-    DEFAULT_CIPHER,
-    EXTENSION,
-    CLOSE_EVENT,
-    COMMAND,
-    PASSWORD,
-    ENCODING,
-    CIPHER
+    DEFAULTS
 };

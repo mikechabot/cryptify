@@ -16,22 +16,26 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { printHelp, printVersion } from './print';
 import CryptifyException from './common/exception';
+import { printHelp, printVersion, printCiphers } from './print';
 import {
     someInclude, getSafePassword, isValidPassword,
-    parseOptionsFromArguments, parseOptionFromArguments, parseFilesFromArguments,
-    isValidCipher
+    isValidCipher, parseOptionsFromArguments, parseOptionFromArguments,
+    parseFilesFromArguments
 } from './common/util';
 import {
-    OPTION_MAP, REQUIRED_OPTIONS, OPTIONS_WITH_NO_ARGS,
-    EXTENSION, DEFAULT_CIPHER, DEFAULT_ENCODING
+    DEFAULTS, OPTION_MAP, REQUIRED_OPTIONS,
+    OPTIONS_WITH_NO_ARGS
 } from './common/const';
 
 function Cryptify (files, password, cipher, encoding) {
+    if (!crypto) {
+        throw new CryptifyException('crypto not found');
+    }
+
     this.password = password;                               // Crypto key
-    this.cipher = cipher || DEFAULT_CIPHER;                 // Cipher algorithm
-    this.encoding = encoding || DEFAULT_ENCODING;           // Return file encoding
+    this.cipher = cipher || DEFAULTS.CIPHER;                // Cipher algorithm
+    this.encoding = encoding || DEFAULTS.ENCODING;          // Return file encoding
     this.files = !Array.isArray(files) ? [files] : files;   // List of files to be encrypted or decrypted
 
     this.__validateFiles(this.getFiles());
@@ -42,6 +46,10 @@ function Cryptify (files, password, cipher, encoding) {
 Cryptify.__initFromCLI = function (args) {
     let instance;
     try {
+        if (!crypto) {
+            throw new CryptifyException('crypto not found');
+        }
+
         if (!args || !args.length) {
             printHelp();
             return;
@@ -60,6 +68,11 @@ Cryptify.__initFromCLI = function (args) {
 
         if (someInclude(optionsWithNoArgs, OPTION_MAP.HELP)) {
             printHelp();
+            return;
+        }
+
+        if (someInclude(optionsWithNoArgs, OPTION_MAP.LIST_CIPHERS)) {
+            printCiphers();
             return;
         }
 
@@ -113,6 +126,10 @@ Cryptify.prototype.__validateCipher = function (cipher) {
     }
 };
 
+Cryptify.prototype.__generateCipher = function () {
+    return this.getCipherFunction()(this.getCipher(), this.getPassword());
+};
+
 Cryptify.prototype.encrypt = function () {
     this.setCommand(OPTION_MAP.ENCRYPT[0]);
     return this.__cryptify();
@@ -124,42 +141,42 @@ Cryptify.prototype.decrypt = function () {
 };
 
 Cryptify.prototype.__cryptify = function () {
-    function __handleError (reject, isCipher, error) {
-        return !isCipher
-            ? reject(new CryptifyException(error.message))
-            : error.message.indexOf('wrong final block length') !== -1
-                ? reject(new CryptifyException(`Potential cipher mismatch: ${error.message}`))
-                : reject(new CryptifyException(error.message));
+    function __handleError (reject, error) {
+        if (error && error.message) {
+            return reject(new CryptifyException(error.message));
+        } else {
+            return reject(new CryptifyException('An unknown error has occurred'));
+        }
     }
 
     return new Promise((resolve, reject) => {
         let closeEventCount = 0;
+        const numberOfFiles = this.getFiles().length;
 
         this.__log(''); // Blank line for spacing
-        this.__info(`${this.doEncrypt() ? 'Encrypting' : 'Decrypting'} ${this.getFiles().length} file(s) with ${getSafePassword(this.getPassword())}`);
+        this.__info(`${this.doEncrypt() ? 'Encrypting' : 'Decrypting'} ${numberOfFiles} file(s) with ${getSafePassword(this.getPassword())}`);
         this.__info(`Using ${this.getCipher()} cipher `);
         this.__info(`Using ${this.getEncoding()} encoding`);
 
         this.getFiles().forEach(file => {
             const inputPath = path.join(file);
-            const outputPath = path.join(`${file}.${EXTENSION}`);
+            const outputPath = path.join(`${file}.${DEFAULTS.EXTENSION}`);
 
             this.__info(`Working on "${inputPath}"`);
 
-            const cipher = this.getCipherFunction()(this.getCipher(), this.getPassword());
-            const is = fs.createReadStream(inputPath);
-            const os = fs.createWriteStream(outputPath);
+            const rs = fs.createReadStream(inputPath);
+            const ws = fs.createWriteStream(outputPath);
 
-            is
+            rs
                 .on('error', __handleError.bind(null, reject))
-                .pipe(cipher)
-                .on('error', __handleError.bind(null, reject, true))
-                .pipe(os)
+                .pipe(this.__generateCipher())
+                .on('error', __handleError.bind(null, reject))
+                .pipe(ws)
                 .on('error', __handleError.bind(null, reject))
                 .on('close', () => {
                     closeEventCount++;
                     fs.renameSync(outputPath, inputPath);
-                    if (closeEventCount === this.getFiles().length) {
+                    if (closeEventCount === numberOfFiles) {
                         this.__info('Processing complete');
                         resolve(
                             this.getFiles()
@@ -213,11 +230,8 @@ Cryptify.prototype.__log = function (message) {
     console.log(message);
 };
 
-Cryptify.prototype.__error = function (message, space) {
-    if (message) {
-        if (space) this.__log('');
-        this.__log(`   \u2718 ${message}`);
-    }
+Cryptify.prototype.__error = function (message) {
+    if (message) this.__log(`   \u2718 ${message}`);
 };
 
 export default Cryptify;
