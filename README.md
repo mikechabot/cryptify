@@ -55,7 +55,7 @@ Adheres to http://docopt.org/
  
        $ cryptify --help
 
-       Cryptify v2.2.6 File-based Encryption Utility
+       Cryptify v2.2.7 File-based Encryption Utility
        https://www.npmjs.com/package/cryptify
        Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -193,7 +193,7 @@ Windows does not store history between command prompt sessions.
 
 ### <a name="cryptify#ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
-2. However, deleting the file PowerShell's history does do the trick.
+2. However, deleting PowerShell's history file does do the trick.
 
         PS C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
