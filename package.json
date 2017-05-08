@@ -1,6 +1,6 @@
 {
   "name": "cryptify",
-  "version": "2.2.9",
+  "version": "2.2.10",
   "description": "File-based encryption utility for Node.js",
   "main": "./index.js",
   "bin": "./index.js",
@@ -9,7 +9,8 @@
     "build": "babel src -d lib",
     "build:example": "babel example.js --out-file example-compiled.js",
     "start:example": "cross-env ENV_SECRET_KEY=mySecretKey123! node example-compiled.js",
-    "prepublish": "crlf --set=LF index.js"
+    "prepublish": "crlf --set=LF index.js",
+    "postpublish": "crlf --set=CRLF index.js"
   },
   "repository": {
     "type": "git",
