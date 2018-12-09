@@ -57,7 +57,7 @@ Adheres to http://docopt.org/
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
 | -e | --encrypt | Encrypt file(s) | | Yes |
-| -d | --decrypt | decrypt file(s) | | Yes |
+| -d | --decrypt | Decrypt file(s) | | Yes |
 | -p | --password | Cryptographic key | | Yes |
 | -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
 | -n | --encoding | Character encoding of returned file(s) | utf8 | No |
