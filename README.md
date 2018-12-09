@@ -85,7 +85,7 @@ Adheres to http://docopt.org/
  
     $ cryptify --help
 
-    Cryptify v3.0.1 File-based Encryption Utility
+    Cryptify v3.0.2 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
