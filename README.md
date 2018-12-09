@@ -2,6 +2,13 @@
 
 A dead simple file-based encyrption (FBE) utitily for Node.js.
 
+:heart: CLI or module-based usage
+<br/>
+:heart: Implements [Node.js crypto](https://nodejs.org/api/crypto.html)
+<br/>
+:heart: Zero dependencies
+<br/>
+
 <div align="center">
 <br />
   <a href="https://www.npmjs.com/package/cryptify">
@@ -133,13 +140,17 @@ Adheres to http://docopt.org/
 #### Encrypt / Decrypt
 
 ```javascript
+
+const filePath = './example.txt';
+const password = process.env.ENV_SECRET_KEY;
+
 try {
-    const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
+    const instance = new Cryptify(filePath, password);
     instance
       .encrypt()
-      .then((files) => { /* Do stuff */ })
+      .then(files => { /* Do stuff */ })
       .then(() => instance.decrypt())
-      .then((files) => { /* Do stuff */ })
+      .then(files => { /* Do stuff */ })
 } catch (error) {
     console.error(error.message);
 }
@@ -148,13 +159,17 @@ try {
 #### Decrypt / Encrypt
 
 ```javascript
+
+const filePaths = ['./foo.props', './bar.json'];
+const password = process.env.ENV_SECRET_KEY;
+
 try {
-    const instance = new Cryptify(['./foo.props', './bar.json'], process.env.ENV_SECRET_KEY);
+    const instance = new Cryptify(filePaths, password);
     instance
       .decrypt()
-      .then((files) => { /* Do stuff */ })
+      .then(files => { /* Do stuff */ })
       .then(() => instance.encrypt())
-      .then((files) => { /* Do stuff */ })
+      .then(files => { /* Do stuff */ })
 } catch (error) {
     console.error(error.message);
 }
