@@ -140,6 +140,7 @@ Adheres to http://docopt.org/
 #### Encrypt / Decrypt
 
 ```javascript
+import Cryptify from 'cryptify';
 
 const filePath = './example.txt';
 const password = process.env.ENV_SECRET_KEY;
@@ -159,6 +160,7 @@ try {
 #### Decrypt / Encrypt
 
 ```javascript
+import Cryptify from 'cryptify';
 
 const filePaths = ['./foo.props', './bar.json'];
 const password = process.env.ENV_SECRET_KEY;
