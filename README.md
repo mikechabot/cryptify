@@ -7,6 +7,7 @@ File-based encryption (FBE) with Node.js
 
 - [CLI](#cli)
   - [Installation](#cli-installation)
+  - [Usage](#usage)
 - [Module](#module)
   - [Installation](#module-installation)
   - [CommonJS](#commonjs)
@@ -17,20 +18,19 @@ File-based encryption (FBE) with Node.js
   - [Windows Powershell](#ps)
 - [Password Requirements](#password-req)
 
-## <a name="cryptify#cli">CLI</a>
+## <a id="cli">CLI</a>
 
-### <a name="cryptify#cli-installation">Installation</a>
+### <a id="cli-installation">Installation</a>
 Yarn or npm
-- ```yarn global add cryptify```
 - ```$ npm i -g cryptify```
 
-### <a name="cryptify#usage">Usage</a>
+### <a id="usage">Usage</a>
 
 Adheres to http://docopt.org/
 
 ```$ cryptify <file>... (-e|-d) -p <password> [options]```
 
-### Options
+### Arguments
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
@@ -51,7 +51,7 @@ Adheres to http://docopt.org/
 
       $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -c aes-256-cbc
 
-- When decrypting, be sure to use the same cipher:
+- When decrypting, be sure to use the same cipher, or omit the cipher if the default was used:
 
       $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
 
@@ -94,20 +94,19 @@ Adheres to http://docopt.org/
            3) Must contain at least 1 numeric character
            4) Must contain a combination of uppercase and lowercase
 
-## <a name="cryptify#module">Module</a>
+## <a id="module">Module</a>
 
-### <a name="cryptify#module-installation">Installation</a>
+### <a id="module-installation">Installation</a>
 Yarn or npm
-- ```yarn add cryptify```
 - ```$ npm i -S cryptify```
 
-### <a name="cryptify#commonjs">CommonJS</a>
+### <a id="commonjs">CommonJS</a>
 
-```const Cryptify = require('cryptify/lib/cryptify').default;```
+```const Cryptify = require('cryptify');```
 
-### <a name="cryptify#es2015">ES2015</a>
+### <a id="es2015">ES2015</a>
 
-```import Cryptify from 'cryptify/lib/cryptify';```
+```import Cryptify from 'cryptify';```
 
 #### Constructor
 
@@ -119,15 +118,10 @@ Encrypt / Decrypt
 try {
     const instance = new Cryptify('./example.txt', process.env.ENV_SECRET_KEY);
     instance
-        .encrypt()
-        .then((files) => {
-            // do stuff
-            instance
-                .decrypt()
-                .then((files) => {
-                    // do stuff
-                });
-        });
+      .encrypt()
+      .then((files) => { /* Do stuff */ })
+      .then(() => instance.decrypt())
+      .then((files) => { /* Do stuff */ })
 } catch (error) {
     console.error(error.message);
 }
@@ -139,30 +133,26 @@ Decrypt / Encrypt
 try {
     const instance = new Cryptify(['./foo.props', './bar.json'], process.env.ENV_SECRET_KEY);
     instance
-        .decrypt()
-        .then((files) => {
-            // do stuff
-            instance
-                .encrypt()
-                .then((files) => {
-                    // do stuff
-                });
-        });
+      .decrypt()
+      .then((files) => { /* Do stuff */ })
+      .then(() => instance.encrypt())
+      .then((files) => { /* Do stuff */ })
 } catch (error) {
     console.error(error.message);
 }
+
 ```
 
-## <a name="cryptify#password-req">Password Requirements</a>
+## <a id="password-req">Password Requirements</a>
 1. Must contain at least 8 characters
 2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
 3. Must contain at least 1 numeric character
 4. Must contain a combination of uppercase and lowercase
 
-## <a name="cryptify#recommendations">Recommendations</a>
+## <a id="recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.
 
-### <a name="cryptify#bash">Bash</a>
+### <a id="bash">Bash</a>
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
 
 1. **Tactical Approach:** Clear a specific entry in the current session
@@ -186,7 +176,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         $ cat $HISTFILE
         exit
         
-### <a name="cryptify#cmd">Windows Command Prompt</a>
+### <a id="cmd">Windows Command Prompt</a>
 Windows does not store history between command prompt sessions.
 1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
@@ -195,7 +185,7 @@ Windows does not store history between command prompt sessions.
         C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
         C:\Users\[user]> exit
 
-### <a name="cryptify#ps">Windows PowerShell</a>
+### <a id="ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
 2. However, deleting PowerShell's history file does do the trick.
 
