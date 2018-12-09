@@ -80,12 +80,12 @@ Adheres to http://docopt.org/
 > Omit the cipher if the default was used
 
     $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
-      
+
 #### Show help
- 
+
     $ cryptify --help
 
-    Cryptify v3.0.2 File-based Encryption Utility
+    Cryptify v3.0.3 File-based Encryption Utility
     https://www.npmjs.com/package/cryptify
     Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
 
@@ -200,11 +200,11 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         667 cryptify ./myfile.txt -e -p mySecretKey
         $ history -d 667
         $ history -w
-        
+
 2. **Blunt Approach:** Clear the entire current session history (in memory)
 
         $ history -c
-        
+
 3. **Nuclear Approach:** Clear current and existing session history (in memory, and on disk)
 
         $ rm $HISTFILE
@@ -213,7 +213,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         (open shell)
         $ cat $HISTFILE
         exit
-        
+
 ### <a id="cmd">Windows Command Prompt</a>
 Windows does not store history between command prompt sessions.
 1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
