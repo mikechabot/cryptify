@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * Cryptify - A file-based encryption utility for Node.js
  * Copyright (C) 2017 Mike Chabot
@@ -12,24 +14,5 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-
-import Cryptify from './cryptify';
-import { printPasswordWarning } from './print';
-
-const cli = (args) => {
-    try {
-        const instance = Cryptify.__initFromCLI(args);
-        if (instance) {
-            instance
-              .__cryptify()
-              .catch((error) => {
-                  console.error(`   \u2718 ${(error && error.message) || 'An error has occurred'}`);
-              })
-              .finally(printPasswordWarning);
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-export default cli;
+const cli = require('./lib/cli').default;
+cli(process.argv.slice(2));
