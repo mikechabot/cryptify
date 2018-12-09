@@ -14,7 +14,7 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 <div align="center">
 <br />
   <a href="https://www.npmjs.com/package/cryptify">
-    <img src="https://img.shields.io/npm/v/cryptify.svg?style=flat-square" alt="npm version" />
+    <img src="https://img.shields.io/npm/v/cryptify.svg" alt="npm version" />
   </a>
   <a href="https://david-dm.org/mikechabot/cryptify">
     <img src="https://david-dm.org/mikechabot/cryptify.svg" alt="dependency status" />
