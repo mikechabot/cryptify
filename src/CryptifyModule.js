@@ -1,7 +1,7 @@
-import BaseCryptify from './BaseCryptify';
+import CryptifyBase from './CryptifyBase';
 import {COMMAND_MODE} from './const';
 
-class CryptifyCli extends BaseCryptify {
+class CryptifyModule extends CryptifyBase {
     constructor(files, password, cipher, encoding) {
         super(files, password, cipher, encoding);
 
@@ -19,4 +19,4 @@ class CryptifyCli extends BaseCryptify {
     }
 }
 
-export default CryptifyCli;
+export default CryptifyModule;

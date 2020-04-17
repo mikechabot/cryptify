@@ -1,6 +1,6 @@
-import BaseCryptify from './BaseCryptify';
+import CryptifyBase from './CryptifyBase';
 
-class CryptifyCli extends BaseCryptify {
+class CryptifyCli extends CryptifyBase {
     constructor(mode, options) {
         const {args, password, cipher, encoding} = options;
 

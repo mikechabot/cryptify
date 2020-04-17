@@ -7,7 +7,7 @@ import logger from './util/logger';
 import {isValidCipherAlgorithm, isValidPassword, getSafePassword} from './util/funcs';
 import {COMMAND_MODE, DEFAULT, IV_BLOCK_LENGTH, STREAM_EVENT} from './const';
 
-class BaseCryptify {
+class CryptifyBase {
     constructor (files, password, algorithm, encoding) {
         if (!crypto) {
             throw new Error('Node.js crypto lib not found');
@@ -246,4 +246,4 @@ class BaseCryptify {
     }
 }
 
-export default BaseCryptify;
+export default CryptifyBase;
