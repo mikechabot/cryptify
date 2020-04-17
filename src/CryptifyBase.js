@@ -5,12 +5,17 @@ import crypto from 'crypto';
 import logger from './util/logger';
 
 import {isValidCipherAlgorithm, isValidPassword, getSafePassword} from './util/funcs';
+import {printPasswordRequirements, printRunHelp} from './util/logger/information';
+
 import {COMMAND_MODE, DEFAULT, IV_BLOCK_LENGTH, STREAM_EVENT} from './const';
 
 class CryptifyBase {
     constructor (files, password, algorithm, encoding) {
         if (!crypto) {
             throw new Error('Node.js crypto lib not found');
+        }
+        if (!password || typeof password !== 'string') {
+            throw new Error('Password must be a string');
         }
 
         this.files = files;
@@ -23,14 +28,12 @@ class CryptifyBase {
             .update(this.password)
             .digest();
 
+        this.isModule = false;
+
         this.iv = null;
         this.mode = null;
         this.cipher = null;
         this.returnResults = null;
-
-        this.validateFiles(this.files);
-        this.validatePassword(this.password);
-        this.validateCipherAlgorithm(this.algorithm);
     }
 
     /**
@@ -61,10 +64,11 @@ class CryptifyBase {
         if (!Array.isArray(files)
             || files.length === 0
             || !files.every(file => typeof file === 'string')) {
-            throw new Error(`Must specify path(s) to file(s), Run "cryptify help ${this.mode}"`);
+            throw new Error(`Must specify path(s) to file(s). ${printRunHelp(this.isModule, this.mode)}`);
         }
         files.forEach(file => {
-            if (!fs.existsSync(file)) {
+            const filePath = path.resolve(file);
+            if (!fs.existsSync(filePath)) {
                 throw new Error(`No such file: ${file}`);
             }
         });
@@ -80,7 +84,10 @@ class CryptifyBase {
             typeof password !== 'string' ||
             !isValidPassword(password)
         ) {
-            throw new Error(`Invalid password, Run "cryptify help ${this.mode}"`);
+            logger.blank();
+            printPasswordRequirements();
+            logger.blank();
+            throw new Error(`Invalid password. ${printRunHelp(this.isModule, this.mode)}`);
         }
     }
 
@@ -203,9 +210,20 @@ class CryptifyBase {
      * @returns {Promise<void>}
      */
     async execute() {
+        try {
+            this.validateFiles(this.files);
+            this.validatePassword(this.password);
+            this.validateCipherAlgorithm(this.algorithm);
+        } catch (e) {
+            return Promise.reject(e);
+        }
+
         let filesRead = 0;
 
-        this.logDetails();
+        logger.blank();
+        logger.info(`${this.getModeVerb()} ${this.files.length} file(s) with ${getSafePassword(this.password)}`);
+        logger.info(`Cipher: ${this.algorithm}`);
+        logger.info(`Encoding: ${this.encoding}`);
 
         for (const file of this.files) {
 
@@ -223,6 +241,7 @@ class CryptifyBase {
             }
 
             fs.renameSync(oPath, iPath);
+
             if (++filesRead === this.files.length) {
                 logger.info('Processing complete');
 
@@ -233,16 +252,6 @@ class CryptifyBase {
                 return Promise.resolve(results);
             }
         }
-    }
-
-    /**
-     * Log general details during the encryption/decryption process
-     */
-    logDetails() {
-        logger.blank();
-        logger.info(`${this.getModeVerb()} ${this.files.length} file(s) with ${getSafePassword(this.password)}`);
-        logger.info(`Cipher: ${this.algorithm}`);
-        logger.info(`Encoding: ${this.encoding}`);
     }
 }
 
