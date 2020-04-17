@@ -6,8 +6,6 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 <br/>
 :heart: Implements [Node.js crypto](https://nodejs.org/api/crypto.html)
 <br/>
-:heart: Zero dependencies
-<br/>
 :heart: Licensed with [GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 <br/>
 
