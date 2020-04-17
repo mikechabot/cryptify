@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { program } from 'commander';
 
-import Cryptify from '../index';
+import CryptifyCli from '../CryptifyCli';
 
 import logger from '../util/logger';
 import packageDotJson from '../../package.json';
@@ -61,17 +61,8 @@ COMMANDS.forEach(({mode, description}) => {
         .option(encoding.label, encoding.description, encoding.defaultValue)
         .action((command, options) => {
             try {
-                const cryptify = new Cryptify(
-                    mode,
-                    options.args,
-                    options.password,
-                    options.cipher,
-                    options.encoding,
-                    options.obfuscate,
-                );
-                cryptify
-                    .execute()
-                    .catch(e => logger.error(e));
+                const cli = new CryptifyCli(mode, options);
+                cli.execute().catch(e => logger.error(e));
             } catch (e) {
                 logger.error(e);
             }

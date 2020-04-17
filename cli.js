@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Cryptify - A file-based encryption utility for Node.js
+ * BaseCryptify - A file-based encryption utility for Node.js
  * Copyright (C) 2020 Mike Chabot
  *
  * This program is free software; you can redistribute it and/or modify

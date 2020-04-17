@@ -1,5 +1,5 @@
 /**
- * Cryptify - A file-based encryption utility for Node.js
+ * BaseCryptify - A file-based encryption utility for Node.js
  * Copyright (C) 2017 Mike Chabot
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,4 +13,4 @@
  * GNU General Public License for more details.
  */
 
-module.exports = require('./lib/cryptify').default;
+module.exports = require('./lib').default;
