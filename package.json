@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node index",
     "build": "babel src -d lib",
+    "cli": "babel-node ./src/cli.js",
+    "test": "jest",
+    "postinstall": "link-module-alias",
     "prepublish": "crlf --set=LF index.js",
     "postpublish": "crlf --set=CRLF index.js"
   },
@@ -30,15 +33,21 @@
   },
   "homepage": "https://github.com/mikechabot/cryptify#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "crlf": "1.1.1",
-    "cross-env": "^5.2.0",
-    "eslint": "^3.19.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "jest": "^25.3.0"
+  },
+  "dependencies": {
+    "commander": "^5.0.0"
   }
 }

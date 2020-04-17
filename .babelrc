@@ -1,3 +1,15 @@
 {
-  "presets": ["es2015"]
+  "presets": [
+    ["jest"],
+    [
+      "@babel/preset-env", {
+      "targets": {
+        "esmodules": true
+        }
+      }
+    ]
+  ],
+  "ignore": [
+    "**/*.test.js"
+  ]
 }

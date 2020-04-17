@@ -2,7 +2,7 @@
 
 /**
  * Cryptify - A file-based encryption utility for Node.js
- * Copyright (C) 2017 Mike Chabot
+ * Copyright (C) 2020 Mike Chabot
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,5 +14,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-const cli = require('./lib/cli').default;
-cli(process.argv.slice(2));
+
+const crypto = require('crypto');
+if (!crypto) {
+    throw new Error('Node.js crypto lib not found');
+}
+
+const { run } = require('./lib/cli');
+run(process.argv);
