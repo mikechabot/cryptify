@@ -13,4 +13,4 @@
  * GNU General Public License for more details.
  */
 
-module.exports = require('./lib').default;
+module.exports = require('./lib/CryptifyModule').default;
