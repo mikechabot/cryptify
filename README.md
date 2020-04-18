@@ -33,6 +33,7 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
   - [Installation](#module-installation)
   - [CommonJS](#commonjs)
   - [ES2015](#es2015)
+- [Supported Ciphers](#ciphers)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
@@ -48,76 +49,91 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 
 ### <a id="usage">Usage</a>
 
-Adheres to http://docopt.org/
+Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander.js/)
 
-```$ cryptify <file>... (-e|-d) -p <password> [options]```
+    $ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+    $ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+    
+### Commands
 
-### Arguments
+| Command | Description |
+| --------- | --------------- |
+| `encrypt` | Encrypt file(s) |
+| `decrypt` | Decrypt file(s) |
+
+### Command Arguments
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
-| -e | --encrypt | Encrypt file(s) | | Yes |
-| -d | --decrypt | Decrypt file(s) | | Yes |
-| -p | --password | Cryptographic key | | Yes |
-| -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
-| -n | --encoding | Character encoding of returned file(s) | utf8 | No |
-| -l | --list | List available cipher algorithms |  | No |
-| -h | --help | Show help menu | | No |
-| -v | --version | Show version | | No |
+| `-p` | `--password` | Cryptographic key | | Yes |
+| `-c` | `--cipher` | Cipher algorithm | `aes-256-cbc` | No |
+| `-e` | `--encoding` | Character encoding of returned file(s) | `utf8` | No |
+| `-s` | `--silent` | Silence informational display | `false` | No |
+
+### General Arguments
+
+| Short | Long | Description |
+| ----- | ---- | ----------- |
+| `-h` | `--help` | Display help |
+| `-v` | `--version` | Show version |
+| `-l` | `--list` | List available ciphers |
 
 #### Encrypt a file with a password
 
-    $ cryptify ./configuration.props -e -p mySecretKey
+    $ cryptify encrypt ./configuration.props -p mySecretKey
 
 #### Encrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher)
 
-    $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -c aes-256-cbc
+    $ cryptify encrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
 #### Decrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher)
 
-> Omit the cipher if the default was used
+    $ cryptify decrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
-    $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
+#### Show general help
 
-#### Show help
+```bash
+$ cryptify help encrypt
 
-    $ cryptify --help
+Usage: cryptify [options] [command]
 
-    Cryptify v3.0.3 File-based Encryption Utility
-    https://www.npmjs.com/package/cryptify
-    Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
+Options:
+  -v, --version                Display the current version
+  -l, --list                   List available ciphers
+  -h, --help                   Display help for the command
 
-    Usage:
-      cryptify <file>... -p <password> (-e|-d) [options]
-      cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
-      cryptify ./foo.json ./bar.json -p mySecretKey --decrypt
-      cryptify --version
+Commands:
+  encrypt [options] <file...>  Encrypt files(s)
+  decrypt [options] <file...>  Decrypt files(s)
+  help <command>               Display help for the command
 
-    Required Commands:
-      -e --encrypt               Encrypt the file(s)
-      -d --decrypt               Decrypt the file(s)
+Example:
+  $ cryptify encrypt file.txt -p 'Secret123!'
+  $ cryptify decrypt file.txt -p 'Secret123!'
 
-    Required Arguments:
-      -p --password              Cryptographic key
+Password Requirements:
+  1. Must contain at least 8 characters
+  2. Must contain at least 1 special character
+  3. Must contain at least 1 numeric character
+  4. Must contain a combination of uppercase and lowercase
+```
 
-    Optional Arguments:
-       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
-       -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
-       -l --list                 List available ciphers
-       -h --help                 Show this menu
-       -v --version              Show version
+#### Show command help
 
-    Required Password Wrapping:
-       Bash                       single-quotes
-       Command Prompt             double-quotes
-       PowerShell                 single-quotes
+```bash
+$ cryptify help encrypt
 
-    Password Requirements:
-       1) Must contain at least 8 characters
-       2) Must contain at least 1 special character
-       3) Must contain at least 1 numeric character
-       4) Must contain a combination of uppercase and lowercase
+Usage: cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
 
+Encrypt files(s)
+
+Options:
+  -p, --password <password>  Cryptographic key
+  -c, --cipher <cipher>      Cipher algorithm (default: "aes-256-cbc")
+  -e, --encoding <encoding>  Character encoding (default: "utf8")
+  -s, --silent               Silence informational display (default: false)
+  -h, --help                 Display help for the command
+```
 ----
 
 ## <a id="module">Module</a>
@@ -135,7 +151,7 @@ Adheres to http://docopt.org/
 
 #### Constructor
 
-```new Cryptify(files, password, cipher, encoding)```
+```new Cryptify(files, password[, cipher][, encoding][, silent])```
 
 #### Encrypt / Decrypt
 
@@ -145,16 +161,13 @@ import Cryptify from 'cryptify';
 const filePath = './example.txt';
 const password = process.env.ENV_SECRET_KEY;
 
-try {
-    const instance = new Cryptify(filePath, password);
-    instance
-      .encrypt()
-      .then(files => { /* Do stuff */ })
-      .then(() => instance.decrypt())
-      .then(files => { /* Do stuff */ })
-} catch (error) {
-    console.error(error.message);
-}
+const instance = new Cryptify(filePath, password);
+instance
+    .encrypt()
+    .then(files => { /* Do stuff */ })
+    .then(() => instance.decrypt())
+    .then(files => { /* Do stuff */ })
+    .catch(e => console.error(e));
 ```
 
 #### Decrypt / Encrypt
@@ -162,28 +175,101 @@ try {
 ```javascript
 import Cryptify from 'cryptify';
 
-const filePaths = ['./foo.props', './bar.json'];
+const filePath = './example.txt';
 const password = process.env.ENV_SECRET_KEY;
 
-try {
-    const instance = new Cryptify(filePaths, password);
-    instance
-      .decrypt()
-      .then(files => { /* Do stuff */ })
-      .then(() => instance.encrypt())
-      .then(files => { /* Do stuff */ })
-} catch (error) {
-    console.error(error.message);
-}
+const instance = new Cryptify(filePath, password);
+instance
+    .decrypt()
+    .then(files => { /* Do stuff */ })
+    .then(() => instance.encrypt())
+    .then(files => { /* Do stuff */ })
+    .catch(e => console.error(e));
 ```
 
 ----
 
-## <a id="password-req">Password Requirements</a>
-1. Must contain at least 8 characters
-2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
-3. Must contain at least 1 numeric character
-4. Must contain a combination of uppercase and lowercase
+## Supported Ciphers
+
+The following ciphers are supported by `cryptify`:
+
+```
+Running cipher validation tests...
+
+ ✓ Passed: aes-128-cbc
+ ✓ Passed: aes-128-cbc-hmac-sha1
+ ✓ Passed: aes-128-cbc-hmac-sha256
+ ✓ Passed: aes-128-cfb
+ ✓ Passed: aes-128-cfb1
+ ✓ Passed: aes-128-cfb8
+ ✓ Passed: aes-128-ctr
+ ✓ Passed: aes-128-ofb
+ ✓ Passed: aes-192-cbc
+ ✓ Passed: aes-192-cfb
+ ✓ Passed: aes-192-cfb1
+ ✓ Passed: aes-192-cfb8
+ ✓ Passed: aes-192-ctr
+ ✓ Passed: aes-192-ofb
+ ✓ Passed: aes-256-cbc
+ ✓ Passed: aes-256-cbc-hmac-sha1
+ ✓ Passed: aes-256-cbc-hmac-sha256
+ ✓ Passed: aes-256-cfb
+ ✓ Passed: aes-256-cfb1
+ ✓ Passed: aes-256-cfb8
+ ✓ Passed: aes-256-ctr
+ ✓ Passed: aes-256-ofb
+ ✓ Passed: aes128
+ ✓ Passed: aes192
+ ✓ Passed: aes256
+ ✓ Passed: aria-128-cbc
+ ✓ Passed: aria-128-cfb
+ ✓ Passed: aria-128-cfb1
+ ✓ Passed: aria-128-cfb8
+ ✓ Passed: aria-128-ctr
+ ✓ Passed: aria-128-ofb
+ ✓ Passed: aria-192-cbc
+ ✓ Passed: aria-192-cfb
+ ✓ Passed: aria-192-cfb1
+ ✓ Passed: aria-192-cfb8
+ ✓ Passed: aria-192-ctr
+ ✓ Passed: aria-192-ofb
+ ✓ Passed: aria-256-cbc
+ ✓ Passed: aria-256-cfb
+ ✓ Passed: aria-256-cfb1
+ ✓ Passed: aria-256-cfb8
+ ✓ Passed: aria-256-ctr
+ ✓ Passed: aria-256-ofb
+ ✓ Passed: aria128
+ ✓ Passed: aria192
+ ✓ Passed: aria256
+ ✓ Passed: camellia-128-cbc
+ ✓ Passed: camellia-128-cfb
+ ✓ Passed: camellia-128-cfb1
+ ✓ Passed: camellia-128-cfb8
+ ✓ Passed: camellia-128-ctr
+ ✓ Passed: camellia-128-ofb
+ ✓ Passed: camellia-192-cbc
+ ✓ Passed: camellia-192-cfb
+ ✓ Passed: camellia-192-cfb1
+ ✓ Passed: camellia-192-cfb8
+ ✓ Passed: camellia-192-ctr
+ ✓ Passed: camellia-192-ofb
+ ✓ Passed: camellia-256-cbc
+ ✓ Passed: camellia-256-cfb
+ ✓ Passed: camellia-256-cfb1
+ ✓ Passed: camellia-256-cfb8
+ ✓ Passed: camellia-256-ctr
+ ✓ Passed: camellia-256-ofb
+ ✓ Passed: camellia128
+ ✓ Passed: camellia192
+ ✓ Passed: camellia256
+ ✓ Passed: chacha20
+
+ ✓ Results: 68 passed, 107 total
+
+```
+
+----
 
 ## <a id="recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.
@@ -195,7 +281,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
 
         $ history
         666 cryptify --help
-        667 cryptify ./myfile.txt -e -p mySecretKey
+        667 cryptify encrypt ./myfile.txt -p mySecretKey
         $ history -d 667
         $ history -w
 
@@ -218,13 +304,21 @@ Windows does not store history between command prompt sessions.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
 3. Once work with `cryptify` is complete, close the command prompt:
 
-        C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
+        C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         C:\Users\[user]> exit
 
 ### <a id="ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
 2. However, deleting PowerShell's history file does do the trick.
 
-        PS C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
+        PS C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
         PS C:\Users\[user]> exit
+        
+----
+
+## <a id="password-req">Password Requirements</a>
+1. Must contain at least 8 characters
+2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
+3. Must contain at least 1 numeric character
+4. Must contain a combination of uppercase and lowercase
