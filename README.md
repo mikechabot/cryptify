@@ -64,18 +64,18 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
-| -p | --password | Cryptographic key | | Yes |
-| -c | --cipher | Cipher algorithm | `aes-256-cbc` | No |
-| -e | --encoding | Character encoding of returned file(s) | `utf8` | No |
-| -s | --silent | Silence informational display | `false` | No |
+| `-p` | `--password` | Cryptographic key | | Yes |
+| `-c` | `--cipher` | Cipher algorithm | `aes-256-cbc` | No |
+| `-e` | `--encoding` | Character encoding of returned file(s) | `utf8` | No |
+| `-s` | `--silent` | Silence informational display | `false` | No |
 
 ### General Arguments
 
 | Short | Long | Description |
 | ----- | ---- | ----------- |
-| -h | --help | Display help |
-| -v | --version | Show version |
-| -l | --list | List available ciphers |
+| `-h` | `--help` | Display help |
+| `-v` | `--version` | Show version |
+| `-l` | `--list` | List available ciphers |
 
 #### Encrypt a file with a password
 
