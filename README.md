@@ -71,11 +71,11 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
 ### General Arguments
 
-| Short | Long | Description | Default | Required |
-| ----- | ---- | ----------- | ------- | -------- |
-| -h | --help | Display help | | No |
-| -v | --version | Show version | | No |
-| -l | --list | List available ciphers |  | No |
+| Short | Long | Description |
+| ----- | ---- | ----------- |
+| -h | --help | Display help |
+| -v | --version | Show version |
+| -l | --list | List available ciphers |
 
 #### Encrypt a file with a password
 
