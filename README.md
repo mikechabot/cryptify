@@ -76,8 +76,6 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
 #### Decrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher)
 
-> Omit the cipher if the default was used
-
     $ cryptify decrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
 #### Show help
