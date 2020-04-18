@@ -189,7 +189,7 @@ instance
 
 ----
 
-## Supported Ciphers
+## <a id="ciphers">Supported Ciphers</a>
 
 The following ciphers are supported by `cryptify`:
 
