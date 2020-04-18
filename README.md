@@ -150,7 +150,7 @@ Options:
 
 #### Constructor
 
-```new Cryptify(files, password, cipher, encoding, silent)```
+```new Cryptify(files, password[, cipher][, encoding][, silent])```
 
 #### Encrypt / Decrypt
 
