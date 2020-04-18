@@ -4,13 +4,20 @@ import crypto from 'crypto';
 
 import logger from './util/logger';
 
-import {isValidCipherAlgorithm, isValidPassword, getSafePassword} from './util/funcs';
+import {
+    isValidCipherAlgorithm,
+    isValidPassword,
+    getSafePassword,
+    getBufferLength
+} from './util/funcs';
 import {printPasswordRequirements, printRunHelp} from './util/logger/information';
 
 import {COMMAND_MODE, DEFAULT, IV_BLOCK_LENGTH, STREAM_EVENT} from './const';
 
+const keySizeRegex = new RegExp(/\d+/);
+
 class CryptifyBase {
-    constructor (files, password, algorithm, encoding) {
+    constructor (files, password, algorithm, encoding, silent) {
         if (!crypto) {
             throw new Error('Node.js crypto lib not found');
         }
@@ -22,11 +29,11 @@ class CryptifyBase {
         this.password = password;
         this.algorithm = algorithm || DEFAULT.CIPHER_ALGORITHM;
         this.encoding = encoding || DEFAULT.ENCODING;
+        this.silent = silent === true;
 
-        this.key = crypto
-            .createHash(DEFAULT.HASH_ALGORITHM)
-            .update(this.password)
-            .digest();
+        this.key = this.getKey();
+
+        console.log(this.key.length);
 
         this.isModule = false;
 
@@ -53,6 +60,24 @@ class CryptifyBase {
      */
     getModeVerb() {
         return this.isEncrypting() ? 'Encrypting' : 'Decrypting';
+    }
+
+    getKey() {
+        const digestHash = crypto
+            .createHash(DEFAULT.HASH_ALGORITHM)
+            .update(this.password)
+            .digest();
+
+        const matches = this.algorithm.match(keySizeRegex);
+        if (matches) {
+            const keySize = matches[0];
+            const length = getBufferLength(keySize);
+            console.log(length);
+
+            return Buffer.from(digestHash, 0, length);
+        }
+
+        return digestHash;
     }
 
     /**
@@ -220,14 +245,18 @@ class CryptifyBase {
 
         let filesRead = 0;
 
-        logger.blank();
-        logger.info(`${this.getModeVerb()} ${this.files.length} file(s) with ${getSafePassword(this.password)}`);
-        logger.info(`Cipher: ${this.algorithm}`);
-        logger.info(`Encoding: ${this.encoding}`);
+        if (!this.silent) {
+            logger.blank();
+            logger.info(`${this.getModeVerb()} ${this.files.length} file(s) with ${getSafePassword(this.password)}`);
+            logger.info(`Cipher: ${this.algorithm}`);
+            logger.info(`Encoding: ${this.encoding}`);
+        }
 
         for (const file of this.files) {
 
-            logger.info(`Working on "${file}"`);
+            if (!this.silent) {
+                logger.info(`Working on "${file}"`);
+            }
 
             const streamsGetter = this.isEncrypting()
                 ? this.getEncryptionStreams.bind(this)
@@ -243,8 +272,9 @@ class CryptifyBase {
             fs.renameSync(oPath, iPath);
 
             if (++filesRead === this.files.length) {
-                logger.info('Processing complete');
-
+                if (!this.silent) {
+                    logger.info('Processing complete');
+                }
                 const results = this.returnResults
                     ? this.getFilesSync()
                     : undefined;

@@ -13,11 +13,13 @@ const TEST_DATA = 'test-data';
 const TEST_DIRECTORY = 'cipher-test';
 const PASSWORD = 'Secret123!';
 
+if (!fs.existsSync(TEST_DIRECTORY)){
+    fs.mkdirSync(TEST_DIRECTORY);
+}
 
 function createDummyFileAndReturnPath(cipher) {
     const filename = `${cipher}.txt`;
     const filepath = path.join(TEST_DIRECTORY, filename);
-
     try {
         fs.appendFileSync(filepath, TEST_DATA);
     } catch (err) {
@@ -27,34 +29,48 @@ function createDummyFileAndReturnPath(cipher) {
     return filepath;
 }
 
-(async () => {
-    for (let i=0; i < ciphers.length; i++) {
-        const cipher = ciphers[i];
+const executionsByCipher = {};
 
-        if (blacklisted.includes(cipher)) {
-            continue;
-        }
-
-        if (!fs.existsSync(TEST_DIRECTORY)){
-            fs.mkdirSync(TEST_DIRECTORY);
-        }
-
-        const filepath = createDummyFileAndReturnPath(cipher);
-
-        try {
-            logger.blank();
-            logger.info(`Testing ${cipher}`);
-
-            const instance = new CryptifyModule(filepath, PASSWORD, cipher);
-            await instance.encrypt();
-            const decrypted = await instance.decrypt();
-
-            console.log(decrypted[0]);
-        } catch (e) {
-            // logger.error(new Error(`Failed on ${e}`));
-        }
-
+for (const cipher of ciphers) {
+    if (blacklisted.includes(cipher)) {
+        continue;
     }
+    if (!executionsByCipher[cipher]) {
+        const filepath = createDummyFileAndReturnPath(cipher);
+        executionsByCipher[cipher] = new CryptifyModule(filepath, PASSWORD, cipher, null, true);
+    }
+}
 
-    return Promise.resolve();
-})();
+const cipherKeys = Object.keys(executionsByCipher);
+
+const encrypts = cipherKeys
+    .map(cipher => {
+        const instance = executionsByCipher[cipher];
+        return new Promise(resolve => {
+            try {
+                return instance
+                    .encrypt()
+                    .then(() => instance.decrypt())
+                    .then(() => resolve(true))
+                    .catch(() => resolve(false));
+            } catch (e) {
+                return resolve(false);
+            }
+        });
+    });
+
+Promise
+    .all(encrypts)
+    .then((results = []) => {
+        results.forEach((r, i) => {
+            const cipher = cipherKeys[i];
+            if (results[i]) {
+                logger.info(`Passed: ${cipher}`);
+            }
+            // if (results[i]) {
+            //     logger.info(`Passed: ${cipher}`);
+            // } else {
+            //     logger.error(new Error(`Failed: ${cipher}`));
+            // }
+        });
+    });

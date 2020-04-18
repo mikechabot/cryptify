@@ -62,6 +62,11 @@ export const options = {
         label: '-c, --cipher <cipher>',
         description: 'Cipher algorithm'
     },
+    silent: {
+        label: '-s, --silent',
+        description: 'Silence informational display',
+        defaultValue: false
+    },
     encoding: {
         label: '-e, --encoding <encoding>',
         description: 'Character encoding',

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import {SPECIAL_CHARACTERS} from '../const';
+import {DEFAULT, HASH_KEY_SIZE, SPECIAL_CHARACTERS} from '../const';
 import {hasLowerCase, hasNumber, hasUpperCase, someInclude} from './helpers';
 
 /**
@@ -57,4 +57,11 @@ export function getSafePassword (password) {
     safePassword.push(password[length - 1]);
 
     return safePassword.join('');
+}
+
+export function getBufferLength(keySize) {
+    if (keySize === 128 || keySize === 192) {
+        return keySize / 8;
+    }
+    return 32;
 }

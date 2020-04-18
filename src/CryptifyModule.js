@@ -2,8 +2,8 @@ import CryptifyBase from './CryptifyBase';
 import {COMMAND_MODE} from './const';
 
 class CryptifyModule extends CryptifyBase {
-    constructor(files, password, cipher, encoding) {
-        super(typeof files === 'string' ? [files] : files, password, cipher, encoding);
+    constructor(files, password, cipher, encoding, silent) {
+        super(typeof files === 'string' ? [files] : files, password, cipher, encoding, silent);
 
         this.isModule = true;
         this.returnResults = true;

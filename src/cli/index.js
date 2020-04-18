@@ -7,7 +7,7 @@ import packageDotJson from '../../package.json';
 import {COMMANDS, options} from '../const';
 import {printAdditionalHelp, printCiphers, printPasswordWarning} from '../util/logger/information';
 
-const {version, help, helpCommand, list, password, cipher, encoding} = options;
+const {version, help, helpCommand, list, password, cipher, encoding, silent} = options;
 
 
 program
@@ -27,6 +27,7 @@ COMMANDS.forEach(({mode, description}) => {
         .requiredOption(password.label, password.description)
         .option(cipher.label, cipher.description)
         .option(encoding.label, encoding.description, encoding.defaultValue)
+        .option(silent.label, silent.description, silent.defaultValue)
         .action((command, options) => {
             try {
                 const instance = new CryptifyCli(mode, options);
@@ -38,7 +39,7 @@ COMMANDS.forEach(({mode, description}) => {
                 console.error(e);
             }
         })
-        .usage('<file>... (-p <password>) [-c <cipher>] [-e <encoding>]');
+        .usage('<file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]');
 });
 
 program.on('--help', printAdditionalHelp);
