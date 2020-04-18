@@ -7,10 +7,8 @@ import logger from './src/util/logger';
 
 const ciphers = crypto.getCiphers();
 
-const blacklisted = ['aes-128-xts'];
-
 const TEST_DATA = 'test-data';
-const TEST_DIRECTORY = 'cipher-test';
+const TEST_DIRECTORY = 'validated-ciphers';
 const PASSWORD = 'Secret123!';
 
 if (!fs.existsSync(TEST_DIRECTORY)){
@@ -32,13 +30,8 @@ function createDummyFileAndReturnPath(cipher) {
 const executionsByCipher = {};
 
 for (const cipher of ciphers) {
-    if (blacklisted.includes(cipher)) {
-        continue;
-    }
-    if (!executionsByCipher[cipher]) {
-        const filepath = createDummyFileAndReturnPath(cipher);
-        executionsByCipher[cipher] = new CryptifyModule(filepath, PASSWORD, cipher, null, true);
-    }
+    const filepath = createDummyFileAndReturnPath(cipher);
+    executionsByCipher[cipher] = new CryptifyModule(filepath, PASSWORD, cipher, null, true);
 }
 
 const cipherKeys = Object.keys(executionsByCipher);
@@ -51,7 +44,7 @@ const encrypts = cipherKeys
                 return instance
                     .encrypt()
                     .then(() => instance.decrypt())
-                    .then(() => resolve(true))
+                    .then(files => resolve(files[0] === TEST_DATA))
                     .catch(() => resolve(false));
             } catch (e) {
                 return resolve(false);
@@ -59,18 +52,23 @@ const encrypts = cipherKeys
         });
     });
 
+logger.blank();
+logger.log('Running cipher validation tests...');
+logger.blank();
+
 Promise
     .all(encrypts)
     .then((results = []) => {
+
+        let successes = 0;
         results.forEach((r, i) => {
             const cipher = cipherKeys[i];
             if (results[i]) {
                 logger.info(`Passed: ${cipher}`);
+                successes += 1;
             }
-            // if (results[i]) {
-            //     logger.info(`Passed: ${cipher}`);
-            // } else {
-            //     logger.error(new Error(`Failed: ${cipher}`));
-            // }
         });
+
+        logger.blank();
+        logger.info(`Results: ${successes} passed, ${results.length - successes} total`);
     });

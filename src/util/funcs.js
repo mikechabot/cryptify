@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import {DEFAULT, HASH_KEY_SIZE, SPECIAL_CHARACTERS} from '../const';
+import {SPECIAL_CHARACTERS} from '../const';
 import {hasLowerCase, hasNumber, hasUpperCase, someInclude} from './helpers';
 
 /**

@@ -4,12 +4,7 @@ import crypto from 'crypto';
 
 import logger from './util/logger';
 
-import {
-    isValidCipherAlgorithm,
-    isValidPassword,
-    getSafePassword,
-    getBufferLength
-} from './util/funcs';
+import {isValidCipherAlgorithm, isValidPassword, getSafePassword, getBufferLength} from './util/funcs';
 import {printPasswordRequirements, printRunHelp} from './util/logger/information';
 
 import {COMMAND_MODE, DEFAULT, IV_BLOCK_LENGTH, STREAM_EVENT} from './const';
@@ -33,14 +28,12 @@ class CryptifyBase {
 
         this.key = this.getKey();
 
-        console.log(this.key.length);
-
         this.isModule = false;
+        this.returnResults = false;
 
         this.iv = null;
         this.mode = null;
         this.cipher = null;
-        this.returnResults = null;
     }
 
     /**
@@ -70,11 +63,9 @@ class CryptifyBase {
 
         const matches = this.algorithm.match(keySizeRegex);
         if (matches) {
-            const keySize = matches[0];
+            const keySize = parseInt(matches[0]);
             const length = getBufferLength(keySize);
-            console.log(length);
-
-            return Buffer.from(digestHash, 0, length);
+            return Buffer.alloc(length, digestHash);
         }
 
         return digestHash;

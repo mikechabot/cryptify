@@ -46,4 +46,4 @@ jspm_packages
 *.dec
 
 # Cipher test files
-cipher-test
+validated-ciphers

@@ -5,12 +5,15 @@
   "bin": "./cli.js",
   "scripts": {
     "start": "node index",
-    "build": "babel src -d lib",
+    "build": "npm run clean && babel src -d lib",
     "cli": "babel-node ./src/cli.js",
     "test": "jest",
-    "postinstall": "link-module-alias",
     "prepublish": "crlf --set=LF index.js",
-    "postpublish": "crlf --set=CRLF index.js"
+    "postpublish": "crlf --set=CRLF index.js",
+    "clean": "npm run clean:build && npm run clean:validate",
+    "clean:build": "rm -rf ./lib",
+    "clean:validate": "rm -rf ./validated-ciphers",
+    "validate": "npm run build && babel-node ./validateCiphers.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +38,7 @@
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.5",
     "crlf": "1.1.1",
     "cross-env": "^7.0.2",
