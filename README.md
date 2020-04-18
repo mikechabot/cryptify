@@ -50,7 +50,8 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 
 Adheres to http://docopt.org/
 
-```$ cryptify <file>... (-e|-d) -p <password> [options]```
+```$ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]```
+```$ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]```
 
 ### Arguments
 
