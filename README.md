@@ -172,8 +172,6 @@ instance
 #### Decrypt / Encrypt
 
 ```javascript
-
-```javascript
 import Cryptify from 'cryptify';
 
 const filePath = './example.txt';
