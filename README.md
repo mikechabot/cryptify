@@ -133,36 +133,32 @@ import Cryptify from 'cryptify';
 const filePath = './example.txt';
 const password = process.env.ENV_SECRET_KEY;
 
-try {
-    const instance = new Cryptify(filePath, password);
-    instance
-      .encrypt()
-      .then(files => { /* Do stuff */ })
-      .then(() => instance.decrypt())
-      .then(files => { /* Do stuff */ })
-} catch (error) {
-    console.error(error.message);
-}
+const instance = new Cryptify(filePath, password);
+instance
+    .encrypt()
+    .then(files => { /* Do stuff */ })
+    .then(() => instance.decrypt())
+    .then(files => { /* Do stuff */ })
+    .catch(e => console.error(e));
 ```
 
 #### Decrypt / Encrypt
 
 ```javascript
+
+```javascript
 import Cryptify from 'cryptify';
 
-const filePaths = ['./foo.props', './bar.jpg'];
+const filePath = './example.txt';
 const password = process.env.ENV_SECRET_KEY;
 
-try {
-    const instance = new Cryptify(filePaths, password);
-    instance
-      .decrypt()
-      .then(files => { /* Do stuff */ })
-      .then(() => instance.encrypt())
-      .then(files => { /* Do stuff */ })
-} catch (error) {
-    console.error(error.message);
-}
+const instance = new Cryptify(filePath, password);
+instance
+    .decrypt()
+    .then(files => { /* Do stuff */ })
+    .then(() => instance.encrypt())
+    .then(files => { /* Do stuff */ })
+    .catch(e => console.error(e));
 ```
 
 ----
