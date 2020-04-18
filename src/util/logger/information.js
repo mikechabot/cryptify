@@ -19,8 +19,8 @@ export function printPasswordRequirements() {
 export function printAdditionalHelp() {
     logger.blank();
     logger.log('Example:');
-    logger.log('  $ cryptify encrypt file.txt -p \'Secret123!\' -c aes-256-cbc-hmac-sha1');
-    logger.log('  $ cryptify decrypt file.txt -p \'Secret123!\' -c aes-256-cbc-hmac-sha1');
+    logger.log('  $ cryptify encrypt file.txt -p \'Secret123!\'');
+    logger.log('  $ cryptify decrypt file.txt -p \'Secret123!\'');
     logger.blank();
     printPasswordRequirements();
 }

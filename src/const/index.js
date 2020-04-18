@@ -60,7 +60,8 @@ export const options = {
     },
     cipher: {
         label: '-c, --cipher <cipher>',
-        description: 'Cipher algorithm'
+        description: 'Cipher algorithm',
+        defaultValue: 'aes-256-cbc'
     },
     silent: {
         label: '-s, --silent',
@@ -83,7 +84,7 @@ export const options = {
  * @type {{ENCODING: string, HASH_ALGORITHM: string, CIPHER_ALGORITHM: string, EXTENSION: string}}
  */
 export const DEFAULT = {
-    CIPHER_ALGORITHM: 'aes-256-cbc', // aes-256-cbc
+    CIPHER_ALGORITHM: 'aes-256-cbc',
     ENCODING: 'utf8',
     EXTENSION: 'tmp',
     HASH_ALGORITHM: 'sha256',

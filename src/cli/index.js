@@ -25,7 +25,7 @@ COMMANDS.forEach(({mode, description}) => {
         .command(`${mode} <file...>`)
         .description(`${description}`)
         .requiredOption(password.label, password.description)
-        .option(cipher.label, cipher.description)
+        .option(cipher.label, cipher.description, cipher.defaultValue)
         .option(encoding.label, encoding.description, encoding.defaultValue)
         .option(silent.label, silent.description, silent.defaultValue)
         .action((command, options) => {
