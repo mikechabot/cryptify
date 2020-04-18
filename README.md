@@ -48,10 +48,10 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 
 ### <a id="usage">Usage</a>
 
-Adheres to http://docopt.org/
+Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander.js/)
 
-```$ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]```
-```$ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]```
+    $ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+    $ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
 
 ### Arguments
 
