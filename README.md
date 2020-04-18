@@ -60,7 +60,7 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 | `encrypt` | Encrypt file(s) |
 | `decrypt` | Decrypt file(s) |
 
-### Arguments
+### Command Arguments
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
@@ -68,9 +68,14 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 | -c | --cipher | Cipher algorithm | `aes-256-cbc` | No |
 | -e | --encoding | Character encoding of returned file(s) | `utf8` | No |
 | -s | --silent | Silence informational display | `false` | No |
-| -l | --list | List available ciphers |  | No |
+
+### General Arguments
+
+| Short | Long | Description | Default | Required |
+| ----- | ---- | ----------- | ------- | -------- |
 | -h | --help | Display help | | No |
 | -v | --version | Show version | | No |
+| -l | --list | List available ciphers |  | No |
 
 #### Encrypt a file with a password
 
