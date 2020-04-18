@@ -78,32 +78,51 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
     $ cryptify decrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
-#### Show help
+#### Show general help
 
-	$ cryptify --help
+```bash
+$ cryptify help encrypt
 
-	Usage: cryptify [options] [command]
+Usage: cryptify [options] [command]
 
-	Options:
-	  -v, --version                Display the current version
-	  -l, --list                   List available ciphers
-	  -h, --help                   Display help for the command
+Options:
+  -v, --version                Display the current version
+  -l, --list                   List available ciphers
+  -h, --help                   Display help for the command
 
-	Commands:
-	  encrypt [options] <file...>  Encrypt files(s)
-	  decrypt [options] <file...>  Decrypt files(s)
-	  help <command>               Display help for the command
+Commands:
+  encrypt [options] <file...>  Encrypt files(s)
+  decrypt [options] <file...>  Decrypt files(s)
+  help <command>               Display help for the command
 
-	Example:
-	  $ cryptify encrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
-	  $ cryptify decrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
+Example:
+  $ cryptify encrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
+  $ cryptify decrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
 
-	Password Requirements:
-	  1. Must contain at least 8 characters
-	  2. Must contain at least 1 special character
-	  3. Must contain at least 1 numeric character
-	  4. Must contain a combination of uppercase and lowercase
+Password Requirements:
+  1. Must contain at least 8 characters
+  2. Must contain at least 1 special character
+  3. Must contain at least 1 numeric character
+  4. Must contain a combination of uppercase and lowercase
 
+```
+
+#### Show command help
+
+```bash
+$ cryptify help encrypt
+
+Usage: cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+
+Encrypt files(s)
+
+Options:
+  -p, --password <password>  Cryptographic key
+  -c, --cipher <cipher>      Cipher algorithm
+  -e, --encoding <encoding>  Character encoding (default: "utf8")
+  -s, --silent               Silence informational display (default: false)
+  -h, --help                 Display help for the command
+```
 ----
 
 ## <a id="module">Module</a>
