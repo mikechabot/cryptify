@@ -67,56 +67,43 @@ Adheres to http://docopt.org/
 
 #### Encrypt a file with a password
 
-    $ cryptify ./configuration.props -e -p mySecretKey
+    $ cryptify encrypt ./configuration.props -p mySecretKey
 
 #### Encrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher)
 
-    $ cryptify ./foo.json ./bar.json ./baz.json -e -p mySecretKey -c aes-256-cbc
+    $ cryptify encrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
 #### Decrypt some files with a custom [cipher](https://nodejs.org/api/crypto.html#crypto_class_cipher)
 
 > Omit the cipher if the default was used
 
-    $ cryptify ./foo.json ./bar.json ./baz.json -d -p mySecretKey -c aes-256-cbc
+    $ cryptify decrypt ./foo.json ./bar.jpg -p mySecretKey -c aes-256-cbc-hmac-sha256
 
 #### Show help
 
-    $ cryptify --help
+	$ cryptify --help
 
-    Cryptify v3.0.3 File-based Encryption Utility
-    https://www.npmjs.com/package/cryptify
-    Implements Node.js Crypto (https://nodejs.org/api/crypto.html)
+	Usage: cryptify [options] [command]
 
-    Usage:
-      cryptify <file>... -p <password> (-e|-d) [options]
-      cryptify ./configuration.props -p mySecretKey -e -c aes-256-cbc
-      cryptify ./foo.json ./bar.json -p mySecretKey --decrypt
-      cryptify --version
+	Options:
+	  -v, --version                Display the current version
+	  -l, --list                   List available ciphers
+	  -h, --help                   Display help for the command
 
-    Required Commands:
-      -e --encrypt               Encrypt the file(s)
-      -d --decrypt               Decrypt the file(s)
+	Commands:
+	  encrypt [options] <file...>  Encrypt files(s)
+	  decrypt [options] <file...>  Decrypt files(s)
+	  help <command>               Display help for the command
 
-    Required Arguments:
-      -p --password              Cryptographic key
+	Example:
+	  $ cryptify encrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
+	  $ cryptify decrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
 
-    Optional Arguments:
-       -c --cipher <algorithm>   Cipher algorithm (Default: aes-256-cbc-hmac-sha256)
-       -n --encoding <encoding>  Character encoding of returned file(s) (Default: utf8)
-       -l --list                 List available ciphers
-       -h --help                 Show this menu
-       -v --version              Show version
-
-    Required Password Wrapping:
-       Bash                       single-quotes
-       Command Prompt             double-quotes
-       PowerShell                 single-quotes
-
-    Password Requirements:
-       1) Must contain at least 8 characters
-       2) Must contain at least 1 special character
-       3) Must contain at least 1 numeric character
-       4) Must contain a combination of uppercase and lowercase
+	Password Requirements:
+	  1. Must contain at least 8 characters
+	  2. Must contain at least 1 special character
+	  3. Must contain at least 1 numeric character
+	  4. Must contain a combination of uppercase and lowercase
 
 ----
 
@@ -135,7 +122,7 @@ Adheres to http://docopt.org/
 
 #### Constructor
 
-```new Cryptify(files, password, cipher, encoding)```
+```new Cryptify(files, password, cipher, encoding, silent)```
 
 #### Encrypt / Decrypt
 
@@ -162,7 +149,7 @@ try {
 ```javascript
 import Cryptify from 'cryptify';
 
-const filePaths = ['./foo.props', './bar.json'];
+const filePaths = ['./foo.props', './bar.jpg'];
 const password = process.env.ENV_SECRET_KEY;
 
 try {
@@ -195,7 +182,7 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
 
         $ history
         666 cryptify --help
-        667 cryptify ./myfile.txt -e -p mySecretKey
+        667 cryptify encrypt ./myfile.txt -p mySecretKey
         $ history -d 667
         $ history -w
 
@@ -218,13 +205,13 @@ Windows does not store history between command prompt sessions.
 2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
 3. Once work with `cryptify` is complete, close the command prompt:
 
-        C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
+        C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         C:\Users\[user]> exit
 
 ### <a id="ps">Windows PowerShell</a>
 1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
 2. However, deleting PowerShell's history file does do the trick.
 
-        PS C:\Users\[user]> cryptify ./myfile.txt -e -p mySecretKey
+        PS C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
         PS C:\Users\[user]> exit
