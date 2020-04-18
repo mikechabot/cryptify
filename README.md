@@ -33,6 +33,7 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
   - [Installation](#module-installation)
   - [CommonJS](#commonjs)
   - [ES2015](#es2015)
+- [Supported Ciphers](#ciphers)
 - [Recommendations](#recommendations)
   - [Bash](#bash)
   - [Windows Command Prompt](#cmd)
@@ -188,11 +189,87 @@ instance
 
 ----
 
-## <a id="password-req">Password Requirements</a>
-1. Must contain at least 8 characters
-2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
-3. Must contain at least 1 numeric character
-4. Must contain a combination of uppercase and lowercase
+## Supported Ciphers
+
+The following ciphers are supported by `cryptify`:
+
+```
+Running cipher validation tests...
+
+ ✓ Passed: aes-128-cbc
+ ✓ Passed: aes-128-cbc-hmac-sha1
+ ✓ Passed: aes-128-cbc-hmac-sha256
+ ✓ Passed: aes-128-cfb
+ ✓ Passed: aes-128-cfb1
+ ✓ Passed: aes-128-cfb8
+ ✓ Passed: aes-128-ctr
+ ✓ Passed: aes-128-ofb
+ ✓ Passed: aes-192-cbc
+ ✓ Passed: aes-192-cfb
+ ✓ Passed: aes-192-cfb1
+ ✓ Passed: aes-192-cfb8
+ ✓ Passed: aes-192-ctr
+ ✓ Passed: aes-192-ofb
+ ✓ Passed: aes-256-cbc
+ ✓ Passed: aes-256-cbc-hmac-sha1
+ ✓ Passed: aes-256-cbc-hmac-sha256
+ ✓ Passed: aes-256-cfb
+ ✓ Passed: aes-256-cfb1
+ ✓ Passed: aes-256-cfb8
+ ✓ Passed: aes-256-ctr
+ ✓ Passed: aes-256-ofb
+ ✓ Passed: aes128
+ ✓ Passed: aes192
+ ✓ Passed: aes256
+ ✓ Passed: aria-128-cbc
+ ✓ Passed: aria-128-cfb
+ ✓ Passed: aria-128-cfb1
+ ✓ Passed: aria-128-cfb8
+ ✓ Passed: aria-128-ctr
+ ✓ Passed: aria-128-ofb
+ ✓ Passed: aria-192-cbc
+ ✓ Passed: aria-192-cfb
+ ✓ Passed: aria-192-cfb1
+ ✓ Passed: aria-192-cfb8
+ ✓ Passed: aria-192-ctr
+ ✓ Passed: aria-192-ofb
+ ✓ Passed: aria-256-cbc
+ ✓ Passed: aria-256-cfb
+ ✓ Passed: aria-256-cfb1
+ ✓ Passed: aria-256-cfb8
+ ✓ Passed: aria-256-ctr
+ ✓ Passed: aria-256-ofb
+ ✓ Passed: aria128
+ ✓ Passed: aria192
+ ✓ Passed: aria256
+ ✓ Passed: camellia-128-cbc
+ ✓ Passed: camellia-128-cfb
+ ✓ Passed: camellia-128-cfb1
+ ✓ Passed: camellia-128-cfb8
+ ✓ Passed: camellia-128-ctr
+ ✓ Passed: camellia-128-ofb
+ ✓ Passed: camellia-192-cbc
+ ✓ Passed: camellia-192-cfb
+ ✓ Passed: camellia-192-cfb1
+ ✓ Passed: camellia-192-cfb8
+ ✓ Passed: camellia-192-ctr
+ ✓ Passed: camellia-192-ofb
+ ✓ Passed: camellia-256-cbc
+ ✓ Passed: camellia-256-cfb
+ ✓ Passed: camellia-256-cfb1
+ ✓ Passed: camellia-256-cfb8
+ ✓ Passed: camellia-256-ctr
+ ✓ Passed: camellia-256-ofb
+ ✓ Passed: camellia128
+ ✓ Passed: camellia192
+ ✓ Passed: camellia256
+ ✓ Passed: chacha20
+
+ ✓ Results: 68 passed, 107 total
+
+```
+
+----
 
 ## <a id="recommendations">Recommendations</a>
 Strongly consider clearing your shell's session history of any sensitive information.
@@ -237,3 +314,11 @@ Windows does not store history between command prompt sessions.
         PS C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
         PS C:\Users\[user]> exit
+        
+----
+
+## <a id="password-req">Password Requirements</a>
+1. Must contain at least 8 characters
+2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
+3. Must contain at least 1 numeric character
+4. Must contain a combination of uppercase and lowercase
