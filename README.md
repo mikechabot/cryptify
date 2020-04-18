@@ -52,18 +52,24 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
     $ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
     $ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+    
+### Commands
+
+| Command | Description |
+| --------- | --------------- |
+| `encrypt` | Encrypt file(s) |
+| `decrypt` | Decrypt file(s) |
 
 ### Arguments
 
 | Short | Long | Description | Default | Required |
 | ----- | ---- | ----------- | ------- | -------- |
-| -e | --encrypt | Encrypt file(s) | | Yes |
-| -d | --decrypt | Decrypt file(s) | | Yes |
 | -p | --password | Cryptographic key | | Yes |
-| -c | --cipher | Cipher algorithm | aes-256-cbc-hmac-sha256 | No |
-| -n | --encoding | Character encoding of returned file(s) | utf8 | No |
-| -l | --list | List available cipher algorithms |  | No |
-| -h | --help | Show help menu | | No |
+| -c | --cipher | Cipher algorithm | `aes-256-cbc` | No |
+| -e | --encoding | Character encoding of returned file(s) | `utf8` | No |
+| -s | --silent | Silence informational display | `false` | No |
+| -l | --list | List available ciphers |  | No |
+| -h | --help | Display help | | No |
 | -v | --version | Show version | | No |
 
 #### Encrypt a file with a password
@@ -96,15 +102,14 @@ Commands:
   help <command>               Display help for the command
 
 Example:
-  $ cryptify encrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
-  $ cryptify decrypt file.txt -p 'Secret123!' -c aes-256-cbc-hmac-sha1
+  $ cryptify encrypt file.txt -p 'Secret123!'
+  $ cryptify decrypt file.txt -p 'Secret123!'
 
 Password Requirements:
   1. Must contain at least 8 characters
   2. Must contain at least 1 special character
   3. Must contain at least 1 numeric character
   4. Must contain a combination of uppercase and lowercase
-
 ```
 
 #### Show command help
@@ -118,7 +123,7 @@ Encrypt files(s)
 
 Options:
   -p, --password <password>  Cryptographic key
-  -c, --cipher <cipher>      Cipher algorithm
+  -c, --cipher <cipher>      Cipher algorithm (default: "aes-256-cbc")
   -e, --encoding <encoding>  Character encoding (default: "utf8")
   -s, --silent               Silence informational display (default: false)
   -h, --help                 Display help for the command
