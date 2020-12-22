@@ -7,10 +7,10 @@ class CryptifyModule extends CryptifyBase {
   constructor(
     files: string | string[],
     password: string,
-    cipher: string,
-    encoding: BufferEncoding,
-    silent: boolean,
-    loose: boolean
+    cipher?: string,
+    encoding?: BufferEncoding,
+    silent?: boolean,
+    loose?: boolean
   ) {
     super(typeof files === 'string' ? [files] : files, password, cipher, encoding, silent, loose);
 

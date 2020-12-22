@@ -13,6 +13,13 @@ export type BufferEncoding =
   | 'binary'
   | 'hex';
 
+export interface DefaultValues {
+  CIPHER_ALGORITHM: string;
+  ENCODING: BufferEncoding;
+  EXTENSION: string;
+  HASH_ALGORITHM: string;
+}
+
 /**
  * Stream events
  */

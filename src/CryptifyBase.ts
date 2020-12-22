@@ -31,10 +31,10 @@ class CryptifyBase {
   constructor(
     files: string[],
     password: string,
-    algorithm: string,
-    encoding: BufferEncoding,
-    silent: boolean,
-    loose: boolean
+    algorithm?: string,
+    encoding?: BufferEncoding,
+    silent?: boolean,
+    loose?: boolean
   ) {
     if (!crypto) {
       throw new Error('Node.js crypto lib not found');

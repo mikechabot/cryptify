@@ -1,4 +1,4 @@
-import { CommandMode, Commands, Options } from './types';
+import { CommandMode, Commands, Options, DefaultValues } from './types';
 
 export const IV_BLOCK_LENGTH = 16;
 
@@ -71,7 +71,7 @@ export const options: Options = {
  * Default parameters
  * @type {{ENCODING: string, HASH_ALGORITHM: string, CIPHER_ALGORITHM: string, EXTENSION: string}}
  */
-export const DEFAULT = {
+export const DEFAULT: DefaultValues = {
   CIPHER_ALGORITHM: 'aes-256-cbc',
   ENCODING: 'utf8',
   EXTENSION: 'tmp',
