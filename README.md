@@ -45,7 +45,8 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
 ## <a id="cli">CLI</a>
 
 ### <a id="cli-installation">Installation</a>
-- ```$ npm i -g cryptify```
+
+- `$ npm i -g cryptify`
 
 ### <a id="usage">Usage</a>
 
@@ -53,30 +54,30 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 
     $ cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
     $ cryptify decrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
-    
+
 ### Commands
 
-| Command | Description |
+| Command   | Description     |
 | --------- | --------------- |
 | `encrypt` | Encrypt file(s) |
 | `decrypt` | Decrypt file(s) |
 
 ### Command Arguments
 
-| Short | Long | Description | Default | Required |
-| ----- | ---- | ----------- | ------- | -------- |
-| `-p` | `--password` | Cryptographic key | | Yes |
-| `-c` | `--cipher` | Cipher algorithm | `aes-256-cbc` | No |
-| `-e` | `--encoding` | Character encoding of returned file(s) | `utf8` | No |
-| `-s` | `--silent` | Silence informational display | `false` | No |
+| Short | Long         | Description                            | Default       | Required |
+| ----- | ------------ | -------------------------------------- | ------------- | -------- |
+| `-p`  | `--password` | Cryptographic key                      |               | Yes      |
+| `-c`  | `--cipher`   | Cipher algorithm                       | `aes-256-cbc` | No       |
+| `-e`  | `--encoding` | Character encoding of returned file(s) | `utf8`        | No       |
+| `-s`  | `--silent`   | Silence informational display          | `false`       | No       |
 
 ### General Arguments
 
-| Short | Long | Description |
-| ----- | ---- | ----------- |
-| `-h` | `--help` | Display help |
-| `-v` | `--version` | Show version |
-| `-l` | `--list` | List available ciphers |
+| Short | Long        | Description            |
+| ----- | ----------- | ---------------------- |
+| `-h`  | `--help`    | Display help           |
+| `-v`  | `--version` | Show version           |
+| `-l`  | `--list`    | List available ciphers |
 
 #### Encrypt a file with a password
 
@@ -134,40 +135,46 @@ Options:
   -s, --silent               Silence informational display (default: false)
   -h, --help                 Display help for the command
 ```
-----
+
+---
 
 ## <a id="module">Module</a>
 
 ### <a id="module-installation">Installation</a>
-- ```$ npm i -S cryptify```
+
+- `$ npm i -S cryptify`
 
 ### <a id="commonjs">CommonJS</a>
 
-```const Cryptify = require('cryptify');```
+`const Cryptify = require('cryptify');`
 
 ### <a id="es2015">ES2015</a>
 
-```import Cryptify from 'cryptify';```
+`import Cryptify from 'cryptify';`
 
 #### Constructor
 
-```new Cryptify(files, password[, cipher][, encoding][, silent])```
+`new Cryptify(files, password[, cipher][, encoding][, silent])`
 
 #### Encrypt / Decrypt
 
 ```javascript
 import Cryptify from 'cryptify';
 
-const filePath = './example.txt';
+const filePath = './example.txt'; // This can also be an array of paths.
 const password = process.env.ENV_SECRET_KEY;
 
 const instance = new Cryptify(filePath, password);
 instance
-    .encrypt()
-    .then(files => { /* Do stuff */ })
-    .then(() => instance.decrypt())
-    .then(files => { /* Do stuff */ })
-    .catch(e => console.error(e));
+  .encrypt()
+  .then((files) => {
+    /* Do stuff */
+  })
+  .then(() => instance.decrypt())
+  .then((files) => {
+    /* Do stuff */
+  })
+  .catch((e) => console.error(e));
 ```
 
 #### Decrypt / Encrypt
@@ -175,19 +182,23 @@ instance
 ```javascript
 import Cryptify from 'cryptify';
 
-const filePath = './example.txt';
+const filePath = './example.txt'; // This can also be an array of paths.
 const password = process.env.ENV_SECRET_KEY;
 
 const instance = new Cryptify(filePath, password);
 instance
-    .decrypt()
-    .then(files => { /* Do stuff */ })
-    .then(() => instance.encrypt())
-    .then(files => { /* Do stuff */ })
-    .catch(e => console.error(e));
+  .decrypt()
+  .then((files) => {
+    /* Do stuff */
+  })
+  .then(() => instance.encrypt())
+  .then((files) => {
+    /* Do stuff */
+  })
+  .catch((e) => console.error(e));
 ```
 
-----
+---
 
 ## <a id="ciphers">Supported Ciphers</a>
 
@@ -269,15 +280,17 @@ Running cipher validation tests...
 
 ```
 
-----
+---
 
 ## <a id="recommendations">Recommendations</a>
+
 Strongly consider clearing your shell's session history of any sensitive information.
 
 ### <a id="bash">Bash</a>
+
 Bash writes the current session history to disk (`~/.bash_history`) at the end of the session.
 
-1. **Tactical Approach:** Clear a specific entry in the current session
+1.  **Tactical Approach:** Clear a specific entry in the current session
 
         $ history
         666 cryptify --help
@@ -285,11 +298,11 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         $ history -d 667
         $ history -w
 
-2. **Blunt Approach:** Clear the entire current session history (in memory)
+2.  **Blunt Approach:** Clear the entire current session history (in memory)
 
         $ history -c
 
-3. **Nuclear Approach:** Clear current and existing session history (in memory, and on disk)
+3.  **Nuclear Approach:** Clear current and existing session history (in memory, and on disk)
 
         $ rm $HISTFILE
         $ history -c
@@ -299,25 +312,29 @@ Bash writes the current session history to disk (`~/.bash_history`) at the end o
         exit
 
 ### <a id="cmd">Windows Command Prompt</a>
+
 Windows does not store history between command prompt sessions.
-1. However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm)  in the Properties menu before use.
-2. Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
-3. Once work with `cryptify` is complete, close the command prompt:
+
+1.  However, for safety, consider [decreasing the `Buffer Size` and `Number of Buffers`](http://imgur.com/a/osdRm) in the Properties menu before use.
+2.  Per [this configuration](http://imgur.com/a/osdRm), Windows will only store the last command in the buffer.
+3.  Once work with `cryptify` is complete, close the command prompt:
 
         C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         C:\Users\[user]> exit
 
 ### <a id="ps">Windows PowerShell</a>
-1. PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
-2. However, deleting PowerShell's history file does do the trick.
+
+1.  PowerShell's [`Clear-History`](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/clear-history) command [doesn't seem to work](https://blogs.msdn.microsoft.com/stevelasker/2016/03/25/clear-history-powershell-doesnt-clear-the-history-3/) as advertised, which is designed to clear the current session's history.
+2.  However, deleting PowerShell's history file does do the trick.
 
         PS C:\Users\[user]> cryptify encrypt ./myfile.txt -p mySecretKey
         PS C:\Users\[user]> del (Get-PSReadlineOption).HistorySavePath
         PS C:\Users\[user]> exit
-        
-----
+
+---
 
 ## <a id="password-req">Password Requirements</a>
+
 1. Must contain at least 8 characters
 2. Must contain at least 1 [special character](https://www.owasp.org/index.php/Password_special_characters)
 3. Must contain at least 1 numeric character

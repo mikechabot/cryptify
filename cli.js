@@ -17,7 +17,7 @@
 
 const crypto = require('crypto');
 if (!crypto) {
-    throw new Error('Node.js crypto lib not found');
+  throw new Error('Node.js crypto lib not found');
 }
 
 const { run } = require('./lib/cli');
