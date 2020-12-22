@@ -9,7 +9,7 @@ const { version, help, helpCommand, list, password, cipher, encoding, silent, lo
 
 program
   .name('cryptify')
-  .version('4.1.0', version.label, version.description)
+  .version('4.1.1', version.label, version.description)
   .helpOption(help.label, help.description)
   .addHelpCommand(helpCommand.label, helpCommand.description);
 
