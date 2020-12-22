@@ -73,6 +73,7 @@ Adheres to http://docopt.org/ via [commander.js](https://github.com/tj/commander
 | `-c`  | `--cipher`   | Cipher algorithm                       | `aes-256-cbc` | No       |
 | `-e`  | `--encoding` | Character encoding of returned file(s) | `utf8`        | No       |
 | `-s`  | `--silent`   | Silence informational display          | `false`       | No       |
+| `-o`  | `--loose`    | Bypass password requirements           | `false`       | No       |
 
 ### General Arguments
 
@@ -127,7 +128,7 @@ Password Requirements:
 ```bash
 $ cryptify help encrypt
 
-Usage: cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]
+Usage: cryptify encrypt <file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s] [-o]
 
 Encrypt files(s)
 
@@ -136,6 +137,7 @@ Options:
   -c, --cipher <cipher>      Cipher algorithm (default: "aes-256-cbc")
   -e, --encoding <encoding>  Character encoding (default: "utf8")
   -s, --silent               Silence informational display (default: false)
+  -o, --loose                Bypass password requirements (default: false)
   -h, --help                 Display help for the command
 ```
 
@@ -157,7 +159,7 @@ Options:
 
 #### Constructor
 
-`new Cryptify(files, password[, cipher][, encoding][, silent])`
+`new Cryptify(files, password[, cipher][, encoding][, silent][, loose])`
 
 #### Encrypt / Decrypt
 
