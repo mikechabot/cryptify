@@ -35,7 +35,7 @@ COMMANDS.forEach(({ mode, description }) => {
         console.error(e);
       }
     })
-    .usage('<file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s]');
+    .usage('<file>... (-p <password>) [-c <cipher>] [-e <encoding>] [-s] [-o]');
 });
 
 program.on('--help', printAdditionalHelp);
