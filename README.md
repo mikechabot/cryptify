@@ -20,6 +20,9 @@ A dead simple file-based encyrption (FBE) utitily for Node.js.
   <a href="https://david-dm.org/mikechabot/cryptify?type=dev">
     <img src="https://david-dm.org/mikechabot/cryptify/dev-status.svg" alt="devDependency status" />
   </a>
+  <a href="https://github.com/mikechabot/cryptify/actions">
+    <img src="https://github.com/mikechabot/cryptify/workflows/Node.js%20CI/badge.svg?branch=master" alt="build status" />
+  </a>
 </div>
 
 <hr />
