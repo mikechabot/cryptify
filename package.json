@@ -15,6 +15,11 @@
     "prevalidate": "npm run build",
     "validate": "babel-node scripts/validateCiphers.js"
   },
+  "files": [
+    "cli.js",
+    "index.js",
+    "lib"
+  ],
   "engines": {
     "node": ">= 10.0.0",
     "npm": ">= 6.0.0"
