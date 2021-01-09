@@ -1,6 +1,6 @@
 {
   "name": "cryptify",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "File-based encryption utility for Node.js",
   "bin": "./cli.js",
   "types": "./lib/CryptifyModule.d.ts",
